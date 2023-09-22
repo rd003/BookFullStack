@@ -1,10 +1,13 @@
 // server.js
 const jsonServer = require("json-server");
 const fs = require("fs");
+var cors = require("cors");
+const jwt = require("jsonwebtoken");
+
 const server = jsonServer.create();
 const router = jsonServer.router("server/db.json");
 const middlewares = jsonServer.defaults();
-const jwt = require("jsonwebtoken");
+server.use(cors());
 server.use(jsonServer.bodyParser);
 
 const secretKey =
