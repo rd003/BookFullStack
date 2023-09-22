@@ -4,21 +4,21 @@ import {
   Output,
   inject,
   EventEmitter,
-} from '@angular/core';
+} from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
-} from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatCardModule } from '@angular/material/card';
-import { LoginModel } from '../data/login.model';
+} from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatCardModule } from "@angular/material/card";
+import { LoginModel } from "../data/login.model";
 
 @Component({
-  selector: 'auth-login-form',
+  selector: "auth-login-form",
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -34,7 +34,7 @@ import { LoginModel } from '../data/login.model';
         <mat-card-title>Login</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit($event)">
           <p>
             <mat-form-field appearance="fill" class="mat-control">
               <mat-label>Username</mat-label>
@@ -98,12 +98,12 @@ export class LoginFormComponent {
   private readonly fb: FormBuilder = inject(FormBuilder);
 
   loginForm: FormGroup = this.fb.group({
-    id: [''],
-    username: ['', Validators.required],
-    password: ['', Validators.required],
+    username: ["", Validators.required],
+    password: ["", Validators.required],
   });
 
-  onSubmit() {
+  onSubmit(event: Event) {
+    event.stopPropagation();
     this.submit.emit(this.loginForm.value);
   }
 }
