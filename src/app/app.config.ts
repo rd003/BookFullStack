@@ -1,8 +1,16 @@
-import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
-
-import { routes } from './app.routes';
+import { ApplicationConfig } from "@angular/core";
+import { provideHttpClient } from "@angular/common/http";
+import {
+  provideRouter,
+  withEnabledBlockingInitialNavigation,
+} from "@angular/router";
+import { appRoutes } from "./app.routes";
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideRouter(routes) ]
+  providers: [
+    provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
+    provideHttpClient(),
+    provideAnimations()
+],
 };
