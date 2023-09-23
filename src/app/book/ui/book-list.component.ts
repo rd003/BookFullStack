@@ -3,10 +3,11 @@ import { MatTableModule } from "@angular/material/table";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { Book } from "../data/book.model";
+import { RouterModule } from "@angular/router";
 @Component({
   selector: "app-book-list",
   standalone: true,
-  imports: [MatTableModule, MatButtonModule, MatIconModule],
+  imports: [MatTableModule, MatButtonModule, MatIconModule, RouterModule],
   template: `
     <table mat-table [dataSource]="books" class="mat-elevation-z8">
       <!-- Position Column -->
@@ -40,7 +41,19 @@ import { Book } from "../data/book.model";
 
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Actions</th>
-        <td mat-cell *matCellDef="let element">
+        <td
+          mat-cell
+          *matCellDef="let element"
+          style="display: flex;gap:5px;padding:5px;align-items:center;"
+        >
+          <button
+            type="button"
+            [routerLink]="['/books', element.Id]"
+            mat-raised-button
+            color="accent"
+          >
+            Details
+          </button>
           <button type="button" mat-mini-fab color="secondary">
             <mat-icon>edit</mat-icon>
           </button>
