@@ -3,7 +3,6 @@ import { MatTableModule } from "@angular/material/table";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { Book } from "../data/book.model";
-import { JsonPipe } from "@angular/common";
 @Component({
   selector: "app-book-list",
   standalone: true,

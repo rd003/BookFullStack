@@ -1,19 +1,33 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { BookFilterComponent } from "./ui/book-filter.component";
 import { BookListComponent } from "./ui/book-list.component";
 import { Book } from "./data/book.model";
+import { BookPaginatorComponent } from "./ui/book-paginator.component";
 
 @Component({
   selector: "app-book",
   standalone: true,
-  imports: [CommonModule, BookFilterComponent, BookListComponent],
+  imports: [BookFilterComponent, BookListComponent, BookPaginatorComponent],
   template: `
     <h1>Books</h1>
-    <app-book-filter />
+    <app-book-filter
+      (onLanguageSelect)="onLanguageSelect($event)"
+      (onSearchTermChange)="onSearchTermChange($event)"
+      [languages]="['Hindi', 'English', 'Italian', 'French', 'Sanskrit']"
+    />
     <app-book-list [books]="books" />
+    <app-book-paginator
+      [totalRecords]="103"
+      (pageSelect)="onPageSelect($event)"
+    />
   `,
-  styles: [],
+  styles: [
+    `
+      :host {
+        padding: 15px 20px;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BookComponent {
@@ -55,4 +69,16 @@ export class BookComponent {
       Price: 149,
     },
   ];
+
+  onPageSelect(pageObj: { page: number; limit: number }) {
+    console.log(pageObj);
+  }
+
+  onLanguageSelect(languages: string[] | null) {
+    console.log(languages);
+  }
+
+  onSearchTermChange(searchTerm: string | null) {
+    console.log(searchTerm);
+  }
 }

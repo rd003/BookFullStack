@@ -8,7 +8,9 @@ import { Component, ChangeDetectionStrategy } from "@angular/core";
   template: `
     <div class="footer">
       Developed in angular and nx by
-      <a href="https://twitter.com/@ravi_devrani">Ravindra Devrani</a>
+      <a href="https://twitter.com/@ravi_devrani" target="_blank"
+        >Ravindra Devrani</a
+      >
     </div>
   `,
   styles: [
