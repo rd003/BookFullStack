@@ -1,21 +1,52 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  inject,
+} from "@angular/core";
 import { BookFilterComponent } from "./ui/book-filter.component";
 import { BookListComponent } from "./ui/book-list.component";
 import { Book } from "./data/book.model";
 import { BookPaginatorComponent } from "./ui/book-paginator.component";
+import { MatButtonModule } from "@angular/material/button";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { Subject, takeUntil } from "rxjs";
+import { BookDialogComponent } from "./ui/book-dialog-component";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 @Component({
   selector: "app-book",
   standalone: true,
-  imports: [BookFilterComponent, BookListComponent, BookPaginatorComponent],
+  imports: [
+    BookFilterComponent,
+    BookListComponent,
+    BookPaginatorComponent,
+    MatButtonModule,
+    MatDialogModule,
+    MatFormFieldModule,
+  ],
   template: `
     <h1>Books</h1>
+    <p>
+      <button
+        type="button"
+        (click)="onAddUpdate('Add', null)"
+        mat-raised-button
+        color="accent"
+      >
+        +
+      </button>
+    </p>
     <app-book-filter
       (onLanguageSelect)="onLanguageSelect($event)"
       (onSearchTermChange)="onSearchTermChange($event)"
       [languages]="['Hindi', 'English', 'Italian', 'French', 'Sanskrit']"
     />
-    <app-book-list [books]="books" />
+    <app-book-list
+      [books]="books"
+      (edit)="onAddUpdate('Edit', $event)"
+      (delete)="onDelete($event)"
+    />
     <app-book-paginator
       [totalRecords]="103"
       (pageSelect)="onPageSelect($event)"
@@ -30,7 +61,57 @@ import { BookPaginatorComponent } from "./ui/book-paginator.component";
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BookComponent {
+export class BookComponent implements OnDestroy {
+  dialog = inject(MatDialog);
+  destroyed$ = new Subject<boolean>();
+
+  onAddUpdate(action: string, book: Book | null = null) {
+    const dialogRef = this.dialog.open(BookDialogComponent, {
+      data: { book, title: action + " Book" },
+    });
+
+    dialogRef.componentInstance.sumbit
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((submittedBook) => {
+        console.log(submittedBook);
+        if (!submittedBook) return;
+        if (submittedBook.Id) {
+          //add book
+        } else {
+          //update book
+          //
+        }
+        // TODO: lines below only executed, when we have added books successfully
+        dialogRef.componentInstance.bookForm.reset();
+        dialogRef.componentInstance.onCanceled();
+      });
+  }
+
+  onPageSelect(pageObj: { page: number; limit: number }) {
+    console.log(pageObj);
+  }
+
+  onLanguageSelect(languages: string[] | null) {
+    console.log(languages);
+  }
+
+  onSearchTermChange(searchTerm: string | null) {
+    console.log(searchTerm);
+  }
+
+  onDelete(book: Book) {
+    if (window.confirm(`Are you sure to delete book: ${book.Title}`)) {
+      //TODO: delete book here
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.unsubscribe();
+  }
+
+  //dummy data
+
   books: Book[] = [
     {
       Id: "8ef9f86b-cdc4-49ab-88de-f641e8d0ab73",
@@ -69,16 +150,4 @@ export class BookComponent {
       Price: 149,
     },
   ];
-
-  onPageSelect(pageObj: { page: number; limit: number }) {
-    console.log(pageObj);
-  }
-
-  onLanguageSelect(languages: string[] | null) {
-    console.log(languages);
-  }
-
-  onSearchTermChange(searchTerm: string | null) {
-    console.log(searchTerm);
-  }
 }

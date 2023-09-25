@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from "@angular/core";
 import { MatTableModule } from "@angular/material/table";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
@@ -54,10 +60,20 @@ import { RouterModule } from "@angular/router";
           >
             Details
           </button>
-          <button type="button" mat-mini-fab color="secondary">
+          <button
+            type="button"
+            (click)="edit.emit(element)"
+            mat-mini-fab
+            color="secondary"
+          >
             <mat-icon>edit</mat-icon>
           </button>
-          <button type="button" mat-mini-fab color="warn">
+          <button
+            type="button"
+            (click)="delete.emit(element)"
+            mat-mini-fab
+            color="warn"
+          >
             <mat-icon>delete</mat-icon>
           </button>
         </td>
@@ -72,6 +88,8 @@ import { RouterModule } from "@angular/router";
 })
 export class BookListComponent {
   @Input({ required: true }) books!: Book[];
+  @Output() edit = new EventEmitter<Book>();
+  @Output() delete = new EventEmitter<Book>();
   displayedColumns = [
     "title",
     "author",
