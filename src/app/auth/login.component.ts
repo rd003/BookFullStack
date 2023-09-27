@@ -1,13 +1,29 @@
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { LoginFormComponent } from "./ui/login-form.component";
 import { LoginModel } from "./data/login.model";
-import { LoginService } from "./data/auth.service";
+import { Store } from "@ngrx/store";
+import authActions from "./state/auth.actions";
+import {
+  selectLoginErrorState,
+  selectLoginLoadingState,
+} from "./state/auth.selectors";
+import { AsyncPipe, NgIf } from "@angular/common";
+import { map } from "rxjs";
 
 @Component({
   selector: "angular-monorepo-login",
   standalone: true,
-  imports: [LoginFormComponent],
-  template: ` <auth-login-form (submit)="onSubmit($event)" /> `,
+  imports: [LoginFormComponent, NgIf, AsyncPipe],
+  template: `
+    <ng-container *ngIf="loading$ | async as loading">
+      {{ loading }}
+    </ng-container>
+
+    <ng-container *ngIf="error$ | async as error">
+      {{ error }}
+    </ng-container>
+    <auth-login-form (submit)="onSubmit($event)" />
+  `,
   styles: [
     `
       :host {
@@ -19,11 +35,14 @@ import { LoginService } from "./data/auth.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent {
-  private readonly _loginService = inject(LoginService);
+  private store = inject(Store);
+
+  loading$ = this.store.select(selectLoginLoadingState);
+  error$ = this.store
+    .select(selectLoginErrorState)
+    .pipe(map((d) => d?.message));
 
   onSubmit(loginData: LoginModel) {
-    console.log(loginData);
+    this.store.dispatch(authActions.login({ login: loginData }));
   }
-
-  constructor() {}
 }
