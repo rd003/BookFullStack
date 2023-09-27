@@ -6,15 +6,19 @@ import authActions from "./state/auth.actions";
 import {
   selectLoginErrorState,
   selectLoginLoadingState,
+  selectLoginState,
 } from "./state/auth.selectors";
 import { AsyncPipe, NgIf } from "@angular/common";
-import { map } from "rxjs";
+import { map, tap } from "rxjs";
+import { Router } from "@angular/router";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "angular-monorepo-login",
   standalone: true,
   imports: [LoginFormComponent, NgIf, AsyncPipe],
   template: `
+    {{ isLoggedIn$ | async }}
     <ng-container *ngIf="loading$ | async as loading">
       {{ loading }}
     </ng-container>
@@ -36,13 +40,30 @@ import { map } from "rxjs";
 })
 export class LoginComponent {
   private store = inject(Store);
+  private router = inject(Router);
 
   loading$ = this.store.select(selectLoginLoadingState);
   error$ = this.store
     .select(selectLoginErrorState)
     .pipe(map((d) => d?.message));
 
+  isLoggedIn$ = this.store.select(selectLoginState);
+
   onSubmit(loginData: LoginModel) {
     this.store.dispatch(authActions.login({ login: loginData }));
+    //TODO: Reset form if authentication failed.
+  }
+
+  constructor() {
+    this.isLoggedIn$
+      .pipe(
+        tap((loggedIn) => {
+          if (loggedIn) {
+            this.router.navigate(["/books"]);
+          }
+        }),
+        takeUntilDestroyed()
+      )
+      .subscribe();
   }
 }
