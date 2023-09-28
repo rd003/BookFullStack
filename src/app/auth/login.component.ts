@@ -12,13 +12,13 @@ import { AsyncPipe, NgIf } from "@angular/common";
 import { map, tap } from "rxjs";
 import { Router } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 
 @Component({
   selector: "angular-monorepo-login",
   standalone: true,
   imports: [LoginFormComponent, NgIf, AsyncPipe],
   template: `
-    {{ isLoggedIn$ | async }}
     <ng-container *ngIf="loading$ | async as loading">
       {{ loading }}
     </ng-container>
@@ -39,8 +39,9 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent {
-  private store = inject(Store);
-  private router = inject(Router);
+  store = inject(Store);
+  router = inject(Router);
+  snackbar = inject(MatSnackBar);
 
   loading$ = this.store.select(selectLoginLoadingState);
   error$ = this.store
@@ -51,6 +52,9 @@ export class LoginComponent {
 
   onSubmit(loginData: LoginModel) {
     this.store.dispatch(authActions.login({ login: loginData }));
+    this.snackbar.open("Suceessfully logged in", "dismis", {
+      duration: 1000,
+    });
     //TODO: Reset form if authentication failed.
   }
 

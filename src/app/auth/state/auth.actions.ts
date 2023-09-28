@@ -14,12 +14,27 @@ const loginFailure = createAction(
   props<{ error: HttpErrorResponse }>()
 );
 
-// TODO: add loadAuthInfo, logout actions
+// TODO: add logout actions
 
 const loadAuthInfo = createAction(
   "[Auth] Load Auth Info",
   props<{ accessToken: string }>()
 );
 
-const authActions = { login, loginSuccess, loginFailure, loadAuthInfo };
+const logout = createAction("[Auth] Logout");
+const logoutSuccess = createAction("[Auth] Logut Success");
+const logoutError = createAction(
+  "[Auth] Logut Error",
+  props<{ error: HttpErrorResponse }>()
+);
+
+const authActions = {
+  login,
+  loginSuccess,
+  loginFailure,
+  loadAuthInfo,
+  logout,
+  logoutSuccess,
+  logoutError,
+};
 export default authActions;

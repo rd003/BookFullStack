@@ -2,7 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { AuthService } from "../data/auth.service";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import authActions from "./auth.actions";
-import { catchError, concat, map, of, switchMap } from "rxjs";
+import { catchError, concat, map, of, switchMap, tap } from "rxjs";
 import { tokenKey } from "../../utils/token.utils";
 
 Injectable();
@@ -22,6 +22,17 @@ export class AuthEffects {
           catchError((error) => of(authActions.loginFailure(error)))
         )
       )
+    )
+  );
+
+  logout = createEffect(() =>
+    this.actions$.pipe(
+      ofType(authActions.logout),
+      map(() => {
+        localStorage.removeItem(tokenKey);
+        return authActions.logoutSuccess();
+      }),
+      catchError((error) => of(authActions.logoutError(error)))
     )
   );
 }

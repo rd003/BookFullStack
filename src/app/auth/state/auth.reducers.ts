@@ -2,6 +2,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { LoginResponse } from "../data/login.model";
 import { createReducer, on } from "@ngrx/store";
 import authActions from "./auth.actions";
+import { state } from "@angular/animations";
 
 export const authFeatureKey = "Auth";
 
@@ -39,5 +40,19 @@ export const authReducer = createReducer(
   on(authActions.loadAuthInfo, (state, { accessToken }) => ({
     ...state,
     loginResponse: { accessToken },
+  })),
+  on(authActions.logout, (state) => ({
+    ...state,
+    loading: true,
+  })),
+  on(authActions.logoutSuccess, (state) => ({
+    ...state,
+    loading: false,
+    loginResponse: null,
+  })),
+  on(authActions.logoutError, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
   }))
 );

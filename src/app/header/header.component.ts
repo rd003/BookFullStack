@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Output,
+  EventEmitter,
+} from "@angular/core";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
@@ -27,6 +32,10 @@ import { RouterModule } from "@angular/router";
           Signup
         </button>
 
+        <button mat-button (click)="logout.emit()" routerLinkActive="active">
+          Logout
+        </button>
+
         <a
           href=""
           mat-icon-button
@@ -50,4 +59,6 @@ import { RouterModule } from "@angular/router";
     `,
   ],
 })
-export class HeaderComponent {}
+export class HeaderComponent {
+  @Output() logout = new EventEmitter();
+}

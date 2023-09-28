@@ -64,7 +64,7 @@ import { LoginModel } from "../data/login.model";
               [disabled]="loginForm.invalid"
               type="submit"
             >
-              Save
+              Login
             </button>
           </p>
         </form>
