@@ -4,11 +4,11 @@ import { LoginModel, LoginResponse } from "./login.model";
 import { environment } from "src/environments/environment.development";
 
 @Injectable({ providedIn: "root" })
-export class LoginService {
+export class AuthService {
   private readonly _url = environment.apiBaseUrl;
   private readonly _http = inject(HttpClient);
 
   login(loginData: LoginModel) {
-    return this._http.post<any>(this._url + "/login", loginData);
+    return this._http.post<LoginResponse>(this._url + "/login", loginData);
   }
 }
