@@ -17,14 +17,24 @@ import { Subject, takeUntil, tap } from "rxjs";
 import { tokenUtils } from "./utils/token.utils";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { AsyncPipe } from "@angular/common";
 
 @Component({
   standalone: true,
-  imports: [RouterModule, HeaderComponent, FooterComponent, MatSnackBarModule],
+  imports: [
+    RouterModule,
+    HeaderComponent,
+    FooterComponent,
+    MatSnackBarModule,
+    AsyncPipe,
+  ],
   selector: "app-root",
   template: `
     <div class="main">
-      <app-header (logout)="logout()" />
+      <app-header
+        (logout)="logout()"
+        [isLoggedIn]="(isLoggedIn$ | async) ?? false"
+      />
       <router-outlet />
       <app-footer />
     </div>

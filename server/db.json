@@ -3,7 +3,7 @@
     {
       "username": "ravindra",
       "password": "ravindra@123",
-      "role": ["admin"]
+      "roles": ["admin"]
     },
     {
       "username": "john",

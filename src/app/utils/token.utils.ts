@@ -1,14 +1,17 @@
 import jwt_decode from "jwt-decode";
+import { User } from "../auth/data/user.model";
 export const tokenKey = "access-token";
 
 const getToken = () => {
   return localStorage.getItem(tokenKey);
 };
 
-const getUserFromToken = (token: string) => {
+const getUserFromToken = (token: string): User | null => {
   try {
     const decodedToken: any = jwt_decode(token);
-    return decodedToken.user;
+    const { roles, username } = decodedToken;
+    const user: User = { roles, username };
+    return user;
   } catch (ex) {
     console.log(ex);
     return null;

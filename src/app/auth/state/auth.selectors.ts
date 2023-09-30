@@ -18,6 +18,18 @@ export const selectLoginState = createSelector(selectAuthState, (state) => {
   return false;
 });
 
+export const selectUserInfo = createSelector(
+  selectAuthState,
+  selectLoginState,
+  (state, isLoggedIn) => {
+    if (!isLoggedIn) return null;
+    const accessToken = state.loginResponse?.accessToken;
+    if (!accessToken) return null;
+    const userInfo = tokenUtils.getUserFromToken(accessToken);
+    return userInfo;
+  }
+);
+
 export const selectLoginLoadingState = createSelector(
   selectAuthState,
   (state) => state.loading

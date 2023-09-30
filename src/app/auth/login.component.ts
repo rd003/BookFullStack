@@ -17,11 +17,9 @@ import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 @Component({
   selector: "angular-monorepo-login",
   standalone: true,
-  imports: [LoginFormComponent, NgIf, AsyncPipe],
+  imports: [LoginFormComponent, NgIf, AsyncPipe, MatSnackBarModule],
   template: `
-    <ng-container *ngIf="loading$ | async as loading">
-      {{ loading }}
-    </ng-container>
+    <ng-container *ngIf="loading$ | async as loading"> wait.... </ng-container>
 
     <ng-container *ngIf="error$ | async as error">
       {{ error }}
@@ -52,9 +50,7 @@ export class LoginComponent {
 
   onSubmit(loginData: LoginModel) {
     this.store.dispatch(authActions.login({ login: loginData }));
-    this.snackbar.open("Suceessfully logged in", "dismis", {
-      duration: 1000,
-    });
+
     //TODO: Reset form if authentication failed.
   }
 
@@ -63,7 +59,10 @@ export class LoginComponent {
       .pipe(
         tap((loggedIn) => {
           if (loggedIn) {
-            this.router.navigate(["/books"]);
+            this.snackbar.open("Suceessfully logged in", "dismis", {
+              duration: 1000,
+            });
+            this.router.navigate(["/dashboard"]);
           }
         }),
         takeUntilDestroyed()
