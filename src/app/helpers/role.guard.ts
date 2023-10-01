@@ -3,12 +3,12 @@ import { CanActivateFn, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import {
   selectLoginLoadingState,
+  selectLoginState,
   selectUserInfo,
 } from "../auth/state/auth.selectors";
 import { of, tap } from "rxjs";
 
 export const roleGuard: CanActivateFn = (route, state) => {
-  debugger;
   const store = inject(Store);
   const router = inject(Router);
   const { roles } = route.data;
@@ -16,7 +16,7 @@ export const roleGuard: CanActivateFn = (route, state) => {
   const userInfo$ = store.select(selectUserInfo);
   var isLoggedIn = false;
   store
-    .select(selectLoginLoadingState)
+    .select(selectLoginState)
     .pipe(
       tap((val) => {
         isLoggedIn = val;

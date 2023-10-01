@@ -11,11 +11,9 @@ export const selectLoginResponseState = createSelector(
 
 export const selectLoginState = createSelector(selectAuthState, (state) => {
   const accessToken = state.loginResponse?.accessToken;
-  if (accessToken) {
-    const isExpired = tokenUtils.isTokenExpired(accessToken);
-    return !isExpired;
-  }
-  return false;
+  if (!accessToken) return false;
+  const isExpired = tokenUtils.isTokenExpired(accessToken);
+  return !isExpired;
 });
 
 export const selectUserInfo = createSelector(

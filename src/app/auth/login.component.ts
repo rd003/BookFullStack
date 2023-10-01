@@ -9,9 +9,8 @@ import {
   selectLoginState,
 } from "./state/auth.selectors";
 import { AsyncPipe, NgIf } from "@angular/common";
-import { map, tap } from "rxjs";
+import { Subject, map, takeUntil, tap } from "rxjs";
 import { Router } from "@angular/router";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 
 @Component({
@@ -40,33 +39,33 @@ export class LoginComponent {
   store = inject(Store);
   router = inject(Router);
   snackbar = inject(MatSnackBar);
+  destroyed$ = new Subject<boolean>();
 
   loading$ = this.store.select(selectLoginLoadingState);
   error$ = this.store
     .select(selectLoginErrorState)
     .pipe(map((d) => d?.message));
 
-  isLoggedIn$ = this.store.select(selectLoginState);
+  isLoggedIn$ = this.store.select(selectLoginState).pipe(
+    tap((loggedIn) => {
+      if (loggedIn) {
+        this.snackbar.open("Suceessfully logged in", "dismis", {
+          duration: 1000,
+        });
+        this.router.navigate(["/dashboard"]);
+      }
+    }),
+    takeUntil(this.destroyed$)
+  );
 
   onSubmit(loginData: LoginModel) {
     this.store.dispatch(authActions.login({ login: loginData }));
-
+    this.isLoggedIn$.subscribe();
     //TODO: Reset form if authentication failed.
   }
 
-  constructor() {
-    this.isLoggedIn$
-      .pipe(
-        tap((loggedIn) => {
-          if (loggedIn) {
-            this.snackbar.open("Suceessfully logged in", "dismis", {
-              duration: 1000,
-            });
-            this.router.navigate(["/dashboard"]);
-          }
-        }),
-        takeUntilDestroyed()
-      )
-      .subscribe();
+  ngOnDestroy() {
+    this.destroyed$.next(true);
+    this.destroyed$.unsubscribe();
   }
 }
