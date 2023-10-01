@@ -25,7 +25,7 @@ import { NgIf } from "@angular/common";
   template: `
     <p>
       <mat-toolbar color="primary">
-        <span>Book App 📔</span>
+        <span>Book App 📔 {{ isLoggedIn }}</span>
         <span class="example-spacer"></span>
         <button mat-button routerLink="/home" routerLinkActive="active">
           Home
