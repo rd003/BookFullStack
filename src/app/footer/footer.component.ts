@@ -7,7 +7,7 @@ import { Component, ChangeDetectionStrategy } from "@angular/core";
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="footer">
-      Developed in angular and nx by
+      Developed in angular by
       <a href="https://twitter.com/@ravi_devrani" target="_blank"
         >Ravindra Devrani</a
       >

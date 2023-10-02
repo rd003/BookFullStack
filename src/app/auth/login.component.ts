@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ViewChild,
+  inject,
+} from "@angular/core";
 import { LoginFormComponent } from "./ui/login-form.component";
 import { LoginModel } from "./data/login.model";
 import { Store } from "@ngrx/store";
@@ -12,17 +17,26 @@ import { AsyncPipe, NgIf } from "@angular/common";
 import { Subject, map, takeUntil, tap } from "rxjs";
 import { Router } from "@angular/router";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @Component({
   selector: "angular-monorepo-login",
   standalone: true,
-  imports: [LoginFormComponent, NgIf, AsyncPipe, MatSnackBarModule],
+  imports: [
+    LoginFormComponent,
+    NgIf,
+    AsyncPipe,
+    MatSnackBarModule,
+    MatProgressSpinnerModule,
+  ],
   template: `
-    <ng-container *ngIf="loading$ | async as loading"> wait.... </ng-container>
-
-    <ng-container *ngIf="error$ | async as error">
-      {{ error }}
+    <ng-container *ngIf="loading$ | async as loading">
+      <mat-spinner *ngIf="loading"></mat-spinner>
     </ng-container>
+
+    <!-- <ng-container *ngIf="error$ | async as error">
+      {{ error }}
+    </ng-container> -->
     <auth-login-form (submit)="onSubmit($event)" />
   `,
   styles: [
@@ -40,11 +54,24 @@ export class LoginComponent {
   router = inject(Router);
   snackbar = inject(MatSnackBar);
   destroyed$ = new Subject<boolean>();
-
+  @ViewChild(LoginFormComponent, { static: true })
+  loginFormComponent!: LoginFormComponent;
   loading$ = this.store.select(selectLoginLoadingState);
+
   error$ = this.store
     .select(selectLoginErrorState)
-    .pipe(map((d) => d?.message));
+    .pipe(
+      tap((d) => {
+        if (d?.message) {
+          this.loginFormComponent.resetLoginForm();
+          this.snackbar.open(d?.message, "dismis", {
+            duration: 1000,
+          });
+        }
+      }),
+      takeUntil(this.destroyed$)
+    )
+    .subscribe();
 
   isLoggedIn$ = this.store.select(selectLoginState).pipe(
     tap((loggedIn) => {

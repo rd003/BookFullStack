@@ -12,6 +12,7 @@ import authActions from "./auth/state/auth.actions";
 import {
   selectLoginResponseState,
   selectLoginState,
+  selectUserInfo,
 } from "./auth/state/auth.selectors";
 import { Subject, takeUntil, tap } from "rxjs";
 import { tokenUtils } from "./utils/token.utils";
@@ -34,6 +35,7 @@ import { AsyncPipe } from "@angular/common";
       <app-header
         (logout)="logout()"
         [isLoggedIn]="(isLoggedIn$ | async) ?? false"
+        [user]="userInfo$ | async"
       />
       <router-outlet />
       <app-footer />
@@ -58,22 +60,14 @@ export class AppComponent implements OnDestroy {
 
   loginResponse$ = this.store.select(selectLoginResponseState);
   isLoggedIn$ = this.store.select(selectLoginState);
+  userInfo$ = this.store.select(selectUserInfo);
 
   logout() {
-    this.isLoggedIn$
-      .pipe(
-        tap((val) => {
-          if (val) {
-            this.store.dispatch(authActions.logout());
-            this.snackBar.open("Successfully logged out", "Dismis", {
-              duration: 1000,
-            });
-            this.router.navigate(["/auth/login"]);
-          }
-        }),
-        takeUntil(this.destroyed$)
-      )
-      .subscribe();
+    this.store.dispatch(authActions.logout());
+    this.snackBar.open("Successfully logged out", "Dismis", {
+      duration: 1000,
+    });
+    this.router.navigate(["/auth/login"]);
   }
 
   constructor() {

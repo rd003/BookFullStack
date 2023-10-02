@@ -2,7 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { AuthService } from "../data/auth.service";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import authActions from "./auth.actions";
-import { catchError, concat, map, of, switchMap, tap } from "rxjs";
+import { catchError, map, of, switchMap } from "rxjs";
 import { tokenKey } from "../../utils/token.utils";
 
 Injectable();

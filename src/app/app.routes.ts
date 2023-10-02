@@ -24,7 +24,7 @@ export const appRoutes: Route[] = [
       import("./dashboard.component").then((a) => a.DashboardComponent),
   },
   {
-    path: "books",
+    path: "manage-books",
     canActivate: [roleGuard],
     data: { roles: ["admin"] },
     loadChildren: () => import("./book/book-routes").then((a) => a.bookRoutes),

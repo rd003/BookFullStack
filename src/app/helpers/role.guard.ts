@@ -1,11 +1,7 @@
 import { inject } from "@angular/core";
 import { CanActivateFn, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
-import {
-  selectLoginLoadingState,
-  selectLoginState,
-  selectUserInfo,
-} from "../auth/state/auth.selectors";
+import { selectLoginState, selectUserInfo } from "../auth/state/auth.selectors";
 import { of, tap } from "rxjs";
 
 export const roleGuard: CanActivateFn = (route, state) => {
@@ -31,7 +27,6 @@ export const roleGuard: CanActivateFn = (route, state) => {
   userInfo$
     .pipe(
       tap((userInfo) => {
-        console.log({ userInfo });
         if (!userInfo) {
           router.navigate(["/auth/login"]);
           return of(false);

@@ -2,6 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { LoginModel, LoginResponse } from "./login.model";
 import { environment } from "src/environments/environment.development";
+import { delay } from "rxjs";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {

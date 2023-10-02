@@ -10,6 +10,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { RouterModule } from "@angular/router";
 import { NgIf } from "@angular/common";
+import { User } from "../auth/data/user.model";
 
 @Component({
   selector: "app-header",
@@ -25,7 +26,7 @@ import { NgIf } from "@angular/common";
   template: `
     <p>
       <mat-toolbar color="primary">
-        <span>Book App 📔 {{ isLoggedIn }}</span>
+        <span>Book App 📔</span>
         <span class="example-spacer"></span>
         <button mat-button routerLink="/home" routerLinkActive="active">
           Home
@@ -34,10 +35,14 @@ import { NgIf } from "@angular/common";
           <button mat-button routerLink="/dashboard" routerLinkActive="active">
             Dashboard
           </button>
-          <button mat-button routerLink="/books" routerLinkActive="active">
-            Books
+          <button
+            *ngIf="isInRole(['admin'])"
+            mat-button
+            routerLink="/manage-books"
+            routerLinkActive="active"
+          >
+            Manage-Books
           </button>
-
           <button mat-button (click)="logout.emit()" routerLinkActive="active">
             Logout
           </button>
@@ -81,4 +86,12 @@ import { NgIf } from "@angular/common";
 export class HeaderComponent {
   @Output() logout = new EventEmitter();
   @Input() isLoggedIn!: boolean;
+  @Input() user!: User | null;
+
+  isInRole(requiredRoles: string[]) {
+    const roles = this.user?.roles;
+    if (!roles) return false;
+    const isAllowed = requiredRoles.some((role) => roles?.includes(role));
+    return isAllowed;
+  }
 }

@@ -106,4 +106,8 @@ export class LoginFormComponent {
     event.stopPropagation();
     this.submit.emit(this.loginForm.value);
   }
+
+  resetLoginForm() {
+    this.loginForm.reset();
+  }
 }
