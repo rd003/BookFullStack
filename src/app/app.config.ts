@@ -1,4 +1,4 @@
-import { ApplicationConfig, ErrorHandler } from "@angular/core";
+import { ApplicationConfig, ErrorHandler, isDevMode } from "@angular/core";
 import { provideHttpClient, withInterceptors } from "@angular/common/http";
 import {
   provideRouter,
@@ -12,9 +12,13 @@ import { authFeatureKey, authReducer } from "./auth/state/auth.reducers";
 import { AuthEffects } from "./auth/state/auth.effects";
 import { GlobalErrorHandler } from "./helpers/global-error-handler";
 import { errorInterceptor } from "./helpers/error-interceptor";
+import { bookFeatureKey, bookReducer } from "./book/state/book.reducer";
+import { BookEffects } from "./book/state/book.effects";
+import { provideStoreDevtools } from '@ngrx/store-devtools';
 
 const reducers = {
   [authFeatureKey]: authReducer,
+  [bookFeatureKey]: bookReducer,
 };
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,10 +26,11 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([errorInterceptor])),
     provideAnimations(),
     provideStore(reducers),
-    provideEffects([AuthEffects]),
+    provideEffects([AuthEffects, BookEffects]),
     {
-      provide: ErrorHandler,
-      useClass: GlobalErrorHandler,
+        provide: ErrorHandler,
+        useClass: GlobalErrorHandler,
     },
-  ],
+    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() })
+],
 };

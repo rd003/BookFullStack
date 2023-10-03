@@ -12,6 +12,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
 const handleServerSideError = (error: HttpErrorResponse) => {
   console.log(error);
+
   switch (error.status) {
     case 400:
       console.log("Bad Request, please try again later .");

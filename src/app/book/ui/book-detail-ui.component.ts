@@ -8,7 +8,12 @@ import { RouterModule } from "@angular/router";
   standalone: true,
   imports: [MatListModule, MatButtonModule, RouterModule],
   template: `
-    <button type="button" mat-raised-button color="accent" routerLink="/books">
+    <button
+      type="button"
+      mat-raised-button
+      color="accent"
+      routerLink="/manage-books"
+    >
       Back
     </button>
     <mat-list>

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { AsyncPipe, NgIf } from "@angular/common";
 import { Store } from "@ngrx/store";
 import { selectUserInfo } from "./auth/state/auth.selectors";
+import { BookService } from "./book/data/book.service";
 
 @Component({
   selector: "app-dashboard",

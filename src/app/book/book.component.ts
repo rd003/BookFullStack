@@ -13,6 +13,10 @@ import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { Subject, takeUntil } from "rxjs";
 import { BookDialogComponent } from "./ui/book-dialog-component";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { Store } from "@ngrx/store";
+import { BookActions } from "./state/book.actions";
+import { selectBooks, selectTotalCount } from "./state/book.selectors";
+import { AsyncPipe, NgIf } from "@angular/common";
 
 @Component({
   selector: "app-book",
@@ -24,6 +28,8 @@ import { MatFormFieldModule } from "@angular/material/form-field";
     MatButtonModule,
     MatDialogModule,
     MatFormFieldModule,
+    AsyncPipe,
+    NgIf,
   ],
   template: `
     <h1>Books</h1>
@@ -42,15 +48,19 @@ import { MatFormFieldModule } from "@angular/material/form-field";
       (onSearchTermChange)="onSearchTermChange($event)"
       [languages]="['Hindi', 'English', 'Italian', 'French', 'Sanskrit']"
     />
-    <app-book-list
-      [books]="books"
-      (edit)="onAddUpdate('Edit', $event)"
-      (delete)="onDelete($event)"
-    />
-    <app-book-paginator
-      [totalRecords]="103"
-      (pageSelect)="onPageSelect($event)"
-    />
+    <ng-container *ngIf="books$ | async as books">
+      <app-book-list
+        [books]="books"
+        (edit)="onAddUpdate('Edit', $event)"
+        (delete)="onDelete($event)"
+      />
+    </ng-container>
+    <ng-container *ngIf="totalCount$ | async as totalCount">
+      <app-book-paginator
+        [totalRecords]="totalCount"
+        (pageSelect)="onPageSelect($event)"
+      />
+    </ng-container>
   `,
   styles: [
     `
@@ -64,6 +74,10 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 export class BookComponent implements OnDestroy {
   dialog = inject(MatDialog);
   destroyed$ = new Subject<boolean>();
+  store = inject(Store);
+
+  books$ = this.store.select(selectBooks);
+  totalCount$ = this.store.select(selectTotalCount);
 
   onAddUpdate(action: string, book: Book | null = null) {
     const dialogRef = this.dialog.open(BookDialogComponent, {
@@ -88,7 +102,10 @@ export class BookComponent implements OnDestroy {
   }
 
   onPageSelect(pageObj: { page: number; limit: number }) {
-    console.log(pageObj);
+    const { page, limit } = pageObj;
+    this.store.dispatch(BookActions.setPage({ page }));
+    this.store.dispatch(BookActions.setLimit({ limit }));
+    // this.loadBooks();
   }
 
   onLanguageSelect(languages: string[] | null) {
@@ -96,7 +113,8 @@ export class BookComponent implements OnDestroy {
   }
 
   onSearchTermChange(searchTerm: string | null) {
-    console.log(searchTerm);
+    this.store.dispatch(BookActions.setSearchTerm({ searchTerm }));
+    this.loadBooks();
   }
 
   onDelete(book: Book) {
@@ -110,44 +128,50 @@ export class BookComponent implements OnDestroy {
     this.destroyed$.unsubscribe();
   }
 
-  //dummy data
+  // //dummy data
 
-  books: Book[] = [
-    {
-      Id: "8ef9f86b-cdc4-49ab-88de-f641e8d0ab73",
-      Author: "Chinua Achebe",
-      Country: "Nigeria",
-      ImageLink: "assets/images/things-fall-apart.jpg",
-      Language: "English",
-      Link: "https://en.wikipedia.org/wiki/Things_Fall_Apart\n",
-      Pages: 209,
-      Title: "Things Fall Apart",
-      Year: 1958,
-      Price: 243,
-    },
-    {
-      Id: "ab38cb7b-f4de-4c3f-9463-dcba1bd62f36",
-      Author: "Hans Christian Andersen",
-      Country: "Denmark",
-      ImageLink: "assets/images/fairy-tales.jpg",
-      Language: "Danish",
-      Link: "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.\n",
-      Pages: 784,
-      Title: "Fairy tales",
-      Year: 1836,
-      Price: 101,
-    },
-    {
-      Id: "591806aa-ea46-4f10-a971-dbae6dbf5e5d",
-      Author: "Dante Alighieri",
-      Country: "Italy",
-      ImageLink: "assets/images/the-divine-comedy.jpg",
-      Language: "Italian",
-      Link: "https://en.wikipedia.org/wiki/Divine_Comedy\n",
-      Pages: 928,
-      Title: "The Divine Comedy",
-      Year: 1315,
-      Price: 149,
-    },
-  ];
+  // books: Book[] = [
+  //   {
+  //     Id: "8ef9f86b-cdc4-49ab-88de-f641e8d0ab73",
+  //     Author: "Chinua Achebe",
+  //     Country: "Nigeria",
+  //     ImageLink: "assets/images/things-fall-apart.jpg",
+  //     Language: "English",
+  //     Link: "https://en.wikipedia.org/wiki/Things_Fall_Apart\n",
+  //     Pages: 209,
+  //     Title: "Things Fall Apart",
+  //     Year: 1958,
+  //     Price: 243,
+  //   },
+  //   {
+  //     Id: "ab38cb7b-f4de-4c3f-9463-dcba1bd62f36",
+  //     Author: "Hans Christian Andersen",
+  //     Country: "Denmark",
+  //     ImageLink: "assets/images/fairy-tales.jpg",
+  //     Language: "Danish",
+  //     Link: "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.\n",
+  //     Pages: 784,
+  //     Title: "Fairy tales",
+  //     Year: 1836,
+  //     Price: 101,
+  //   },
+  //   {
+  //     Id: "591806aa-ea46-4f10-a971-dbae6dbf5e5d",
+  //     Author: "Dante Alighieri",
+  //     Country: "Italy",
+  //     ImageLink: "assets/images/the-divine-comedy.jpg",
+  //     Language: "Italian",
+  //     Link: "https://en.wikipedia.org/wiki/Divine_Comedy\n",
+  //     Pages: 928,
+  //     Title: "The Divine Comedy",
+  //     Year: 1315,
+  //     Price: 149,
+  //   },
+  // ];
+  loadBooks() {
+    this.store.dispatch(BookActions.loadBooks());
+  }
+  constructor() {
+    this.loadBooks();
+  }
 }

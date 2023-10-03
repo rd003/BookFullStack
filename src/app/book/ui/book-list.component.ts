@@ -54,7 +54,7 @@ import { RouterModule } from "@angular/router";
         >
           <button
             type="button"
-            [routerLink]="['/books', element.Id]"
+            [routerLink]="['/manage-books', element.Id]"
             mat-raised-button
             color="accent"
           >
@@ -87,7 +87,7 @@ import { RouterModule } from "@angular/router";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BookListComponent {
-  @Input({ required: true }) books!: Book[];
+  @Input({ required: true }) books: Book[] = [];
   @Output() edit = new EventEmitter<Book>();
   @Output() delete = new EventEmitter<Book>();
   displayedColumns = [
