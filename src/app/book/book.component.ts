@@ -88,13 +88,11 @@ export class BookComponent implements OnDestroy {
     dialogRef.componentInstance.sumbit
       .pipe(takeUntil(this.destroyed$))
       .subscribe((submittedBook) => {
-        console.log(submittedBook);
         if (!submittedBook) return;
         if (submittedBook.Id) {
-          //add book
+          // update book
         } else {
-          //update book
-          //
+          this.store.dispatch(BookActions.addBook({ book: submittedBook }));
         }
         // TODO: lines below only executed, when we have added books successfully
         dialogRef.componentInstance.bookForm.reset();

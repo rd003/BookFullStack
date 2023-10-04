@@ -15,5 +15,11 @@ export const BookActions = createActionGroup({
     "Set Sort Direction": props<{
       sortDirection: "asc" | "desc" | null;
     }>(),
+    "Add Book": props<{ book: Book }>(),
+    "Add Book Success": props<{ book: Book }>(),
+    "Add Book Failure": props<{ error: HttpErrorResponse }>(),
+    "Update Book": props<{ book: Book }>(),
+    "Update Book Success": props<{ book: Book }>(),
+    "Update Book Failure": props<{ error: HttpErrorResponse }>(),
   },
 });

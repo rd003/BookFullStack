@@ -62,5 +62,25 @@ export const bookReducer = createReducer(
   on(BookActions.setSortDirection, (state, { sortDirection }) => ({
     ...state,
     sortDirection,
+  })),
+  on(BookActions.addBook, (state, { book }) => ({
+    ...state,
+    loading: true,
+  })),
+  on(BookActions.addBookSuccess, (state, { book }) => {
+    const books = state.bookResponse?.books ?? [];
+    const currentCount = state.bookResponse?.totalCount ?? 0;
+    const updatedBooks = [...books, book];
+    const updateState: BookState = {
+      ...state,
+      bookResponse: { books: updatedBooks, totalCount: currentCount + 1 },
+      loading: false,
+    };
+    return updateState;
+  }),
+  on(BookActions.addBookFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
   }))
 );

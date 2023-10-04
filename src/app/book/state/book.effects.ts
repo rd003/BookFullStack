@@ -31,6 +31,18 @@ export class BookEffects {
     )
   );
 
+  addBook = createEffect(() =>
+    this.actions$.pipe(
+      ofType(BookActions.addBook),
+      switchMap((action) => {
+        return this.bookService.addBook(action.book).pipe(
+          map((response) => BookActions.addBookSuccess({ book: response })),
+          catchError((error) => of(BookActions.addBookFailure({ error })))
+        );
+      })
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private bookService: BookService,
