@@ -34,6 +34,7 @@ export class BookService {
         map((response) => {
           const totalCount = Number(response.headers.get("X-Total-Count"));
           const books = response.body as Book[];
+          console.log(response);
           const bookResponse: BookResponse = { books, totalCount };
           return bookResponse;
         })
