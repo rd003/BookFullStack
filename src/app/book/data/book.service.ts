@@ -43,8 +43,8 @@ export class BookService {
     return this.http.put<Book>(url, book);
   }
 
-  findBookById(book: Book) {
-    const url = `${this.url}/${book.id}`;
+  findBookById(id: string) {
+    const url = `${this.url}/${id}`;
     return this.http.get<Book>(url);
   }
 
