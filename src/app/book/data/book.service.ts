@@ -39,12 +39,12 @@ export class BookService {
   }
 
   updateBook(book: Book) {
-    const url = `${this.url}/${book.Id}`;
+    const url = `${this.url}/${book.id}`;
     return this.http.put<Book>(url, book);
   }
 
   findBookById(book: Book) {
-    const url = `${this.url}/${book.Id}`;
+    const url = `${this.url}/${book.id}`;
     return this.http.get<Book>(url);
   }
 

@@ -82,7 +82,7 @@ import { Sort, MatSortModule } from "@angular/material/sort";
         >
           <button
             type="button"
-            [routerLink]="['/manage-books', element.Id]"
+            [routerLink]="['/manage-books', element.id]"
             mat-raised-button
             color="accent"
           >

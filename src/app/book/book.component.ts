@@ -89,7 +89,7 @@ export class BookComponent implements OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((submittedBook) => {
         if (!submittedBook) return;
-        if (submittedBook.Id) {
+        if (submittedBook.id) {
           // update book
         } else {
           this.store.dispatch(BookActions.addBook({ book: submittedBook }));

@@ -36,7 +36,7 @@ import { MatInputModule } from "@angular/material/input";
     </h1>
     <div mat-dialog-content>
       <form [formGroup]="bookForm" class="book-form">
-        <input formControlName="Id" type="hidden" />
+        <input formControlName="id" type="hidden" />
         <mat-form-field appearance="fill">
           <mat-label>Title</mat-label>
           <input matInput placeholder="title" formControlName="Title" />
@@ -111,7 +111,7 @@ export class BookDialogComponent {
   @Output() sumbit = new EventEmitter<Book>();
   //msg = this.data.message;
   bookForm = new FormGroup({
-    Id: new FormControl<string>(""),
+    id: new FormControl<string | null>(null),
     Title: new FormControl<string>("", Validators.required),
     Author: new FormControl<string>("", Validators.required),
     Country: new FormControl<string>("", Validators.required),
