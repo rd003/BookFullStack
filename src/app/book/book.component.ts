@@ -91,6 +91,7 @@ export class BookComponent implements OnDestroy {
         if (!submittedBook) return;
         if (submittedBook.id) {
           // update book
+          this.store.dispatch(BookActions.updateBook({ book: submittedBook }));
         } else {
           this.store.dispatch(BookActions.addBook({ book: submittedBook }));
         }
@@ -125,7 +126,7 @@ export class BookComponent implements OnDestroy {
 
   onDelete(book: Book) {
     if (window.confirm(`Are you sure to delete book: ${book.Title}`)) {
-      //TODO: delete book here
+      this.store.dispatch(BookActions.deleteBook({ id: book.id }));
     }
   }
 

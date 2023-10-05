@@ -43,6 +43,30 @@ export class BookEffects {
     )
   );
 
+  updateBook = createEffect(() =>
+    this.actions$.pipe(
+      ofType(BookActions.updateBook),
+      switchMap((action) => {
+        return this.bookService.updateBook(action.book).pipe(
+          map((response) => BookActions.updateBookSuccess({ book: response })),
+          catchError((error) => of(BookActions.updateBookFailure({ error })))
+        );
+      })
+    )
+  );
+
+  deleteBook = createEffect(() =>
+    this.actions$.pipe(
+      ofType(BookActions.deleteBook),
+      switchMap((action) => {
+        return this.bookService.deleteBook(action.id).pipe(
+          map((response) => BookActions.deleteBookSuccess({ id: action.id })),
+          catchError((error) => of(BookActions.deleteBookFailure({ error })))
+        );
+      })
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private bookService: BookService,

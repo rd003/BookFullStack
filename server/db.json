@@ -37,13 +37,13 @@
     },
     {
       "id": "ab38cb7b-f4de-4c3f-9463-dcba1bd62f36",
+      "Title": "Fairy tales",
       "Author": "Hans Christian Andersen",
       "Country": "Denmark",
       "ImageLink": "assets/images/fairy-tales.jpg",
       "Language": "Danish",
       "Link": "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.\n",
       "Pages": 784,
-      "Title": "Fairy tales",
       "Year": 1836,
       "Price": 101
     },
@@ -1222,18 +1222,6 @@
       "Title": "Memoirs of Hadrian",
       "Year": 1951,
       "Price": 267
-    },
-    {
-      "id": "qLtrd0i",
-      "Title": "b1",
-      "Author": "a1",
-      "Country": "India",
-      "ImageLink": "",
-      "Language": "Hindi",
-      "Link": "asdfasdf",
-      "Pages": "100",
-      "Year": "2001",
-      "Price": "200"
     }
   ]
 }

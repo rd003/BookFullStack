@@ -50,6 +50,6 @@ export class BookService {
 
   deleteBook(id: string) {
     const url = `${this.url}/${id}`;
-    return this.http.get<Book>(url);
+    return this.http.delete<any>(url);
   }
 }

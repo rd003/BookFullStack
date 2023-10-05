@@ -21,5 +21,8 @@ export const BookActions = createActionGroup({
     "Update Book": props<{ book: Book }>(),
     "Update Book Success": props<{ book: Book }>(),
     "Update Book Failure": props<{ error: HttpErrorResponse }>(),
+    "Delete Book": props<{ id: string }>(),
+    "Delete Book Success": props<{ id: string }>(),
+    "Delete Book Failure": props<{ error: HttpErrorResponse }>(),
   },
 });
