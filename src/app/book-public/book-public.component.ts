@@ -17,7 +17,7 @@ import {
   selector: "app-book-public",
   standalone: true,
   imports: [NgIf, NgFor, AsyncPipe],
-  template: ``,
+  template: ` <h2>Book Works</h2> `,
   styles: [``],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
