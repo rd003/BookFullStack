@@ -30,6 +30,13 @@ export const appRoutes: Route[] = [
     loadChildren: () => import("./book/book-routes").then((a) => a.bookRoutes),
   },
   {
+    path: "books",
+    loadChildren: () =>
+      import("./book-public/book-public-routes").then(
+        (a) => a.book_public_routes
+      ),
+  },
+  {
     path: "unauthorized",
     loadComponent: () =>
       import("./unhauthorized.component").then((a) => a.UnhauthorizedComponent),

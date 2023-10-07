@@ -31,6 +31,9 @@ import { User } from "../auth/data/user.model";
         <button mat-button routerLink="/home" routerLinkActive="active">
           Home
         </button>
+        <button mat-button routerLink="/books" routerLinkActive="active">
+          Books
+        </button>
         <ng-container *ngIf="isLoggedIn">
           <button mat-button routerLink="/dashboard" routerLinkActive="active">
             Dashboard
