@@ -12,15 +12,23 @@ import {
   selectBookLoading,
   selectBooks,
 } from "../book/state/book.selectors";
-import { BookListPublic } from "./UI/book-list-public.component";
+import { BookListPublicComponent } from "./UI/book-list-public.component";
+import { BookFilterPublicComponent } from "./UI/book-filter-public.component";
 
 @Component({
   selector: "app-book-public",
   standalone: true,
-  imports: [NgIf, NgFor, AsyncPipe, BookListPublic],
-  template: `<h2>Book Works</h2>
-
-    <app-book-list-public /> `,
+  imports: [
+    NgIf,
+    NgFor,
+    AsyncPipe,
+    BookListPublicComponent,
+    BookFilterPublicComponent,
+  ],
+  template: `
+    <app-book-filter-public />
+    <app-book-list-public />
+  `,
   styles: [``],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
