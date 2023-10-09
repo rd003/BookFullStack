@@ -26,10 +26,26 @@ import { BookFilterPublicComponent } from "./UI/book-filter-public.component";
     BookFilterPublicComponent,
   ],
   template: `
-    <app-book-filter-public />
-    <app-book-list-public />
+    <ng-container *ngIf="error$ | async; else noerror">
+      Error on loading books
+    </ng-container>
+    <ng-template #noerror>
+      <ng-container *ngIf="books$ | async as books">
+        <ng-container *ngIf="books && books.length > 0; else nodata">
+          <app-book-filter-public (OnBookSearch)="handleBookSearch($event)" />
+          <app-book-list-public [books]="books" />
+        </ng-container>
+        <ng-template #nodata> No books found </ng-template>
+      </ng-container>
+    </ng-template>
   `,
-  styles: [``],
+  styles: [
+    `
+      :host {
+        padding: 15px 20px;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BookPublicComponent implements OnInit {
@@ -38,11 +54,14 @@ export class BookPublicComponent implements OnInit {
   loading$ = this.store.select(selectBookLoading);
   error$ = this.store.select(selectBookError);
 
-  setSearchTerm(searchTerm: string) {
+  handleBookSearch(searchTerm: string) {
+    // TODO: search filter is not working, we are getting value of searchTerm here.
     this.store.dispatch(BookActions.setSearchTerm({ searchTerm }));
   }
 
   ngOnInit(): void {
+    this.store.dispatch(BookActions.setPage({ page: null }));
+    this.store.dispatch(BookActions.setLimit({ limit: null }));
     this.store.dispatch(BookActions.loadBooks());
   }
 }

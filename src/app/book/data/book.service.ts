@@ -12,12 +12,12 @@ export class BookService {
   getBooks(bookParams: BookParams) {
     const { searchTerm, _page, _limit, sortColumn, sortDirection } = bookParams;
     let parameters = new HttpParams();
+    parameters = parameters.set("bypassAuth", true);
     if (searchTerm) parameters = parameters.set("q", searchTerm);
     if (_page) parameters = parameters.set("_page", _page.toString());
     if (_limit) parameters = parameters.set("_limit", _limit.toString());
     if (sortColumn) parameters = parameters.set("_sort", sortColumn);
     if (sortDirection) parameters = parameters.set("_order", sortDirection);
-
     return this.http
       .get(this.url, {
         observe: "response",

@@ -1,8 +1,9 @@
 import { AsyncPipe, NgFor, NgIf } from "@angular/common";
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
+import { Book } from "src/app/book/data/book.model";
 
 @Component({
   selector: "app-book-list-public",
@@ -16,23 +17,16 @@ import { MatIconModule } from "@angular/material/icon";
     MatIconModule,
   ],
   template: `
-    <mat-card
-      class="example-card"
-      *ngFor="let book of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]"
-    >
+    <mat-card class="example-card" *ngFor="let book of books">
       <mat-card-header>
-        <mat-card-title>Book Name</mat-card-title>
-        <mat-card-subtitle> Author</mat-card-subtitle>
+        <mat-card-title>{{ book.Title }}</mat-card-title>
+        <mat-card-subtitle> {{ book.Title }}</mat-card-subtitle>
       </mat-card-header>
-      <img
-        mat-card-image
-        src="https://material.angular.io/assets/img/examples/shiba2.jpg"
-        alt="Photo of a Shiba Inu"
-      />
+      <img mat-card-image [src]="book.ImageLink" alt="Photo of a Shiba Inu" />
       <mat-card-content>
         <p></p>
-        <p>Language: Hindi</p>
-        <p>Price: 200</p>
+        <p>Language: {{ book.Language }}</p>
+        <p>Price: ₹{{ book.Price }}</p>
       </mat-card-content>
       <mat-card-actions>
         <button mat-raised-button color="accent">
@@ -45,11 +39,11 @@ import { MatIconModule } from "@angular/material/icon";
   styles: [
     `
       .example-card {
-        max-width: 250px;
+        max-width: 242px;
       }
 
       .example-header-image {
-        background-image: url("https://material.angular.io/assets/img/examples/shiba1.jpg");
+        /* background-image: url("https://material.angular.io/assets/img/examples/shiba1.jpg"); */
         background-size: cover;
       }
 
@@ -63,4 +57,6 @@ import { MatIconModule } from "@angular/material/icon";
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BookListPublicComponent {}
+export class BookListPublicComponent {
+  @Input() books!: Book[];
+}
