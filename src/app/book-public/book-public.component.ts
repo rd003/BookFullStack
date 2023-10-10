@@ -57,6 +57,7 @@ export class BookPublicComponent implements OnInit {
   handleBookSearch(searchTerm: string) {
     // TODO: search filter is not working, we are getting value of searchTerm here.
     this.store.dispatch(BookActions.setSearchTerm({ searchTerm }));
+    this.store.dispatch(BookActions.loadBooks());
   }
 
   ngOnInit(): void {
