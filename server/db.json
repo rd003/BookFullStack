@@ -3,25 +3,29 @@
     {
       "username": "ravindra",
       "password": "ravindra@123",
-      "roles": [
-        "admin"
-      ]
+      "roles": ["admin"]
     },
     {
       "username": "john",
       "password": "john@123",
-      "roles": [
-        "user"
-      ]
+      "roles": ["user"]
     },
     {
       "username": "ved",
       "password": "ved@123",
-      "roles": [
-        "editor,developer"
-      ]
+      "roles": ["editor,developer"]
     }
   ],
+  "carts": {
+    "id": "cart1",
+    "username": "john",
+    "cartItems": [
+      {
+        "bookId": "591806aa-ea46-4f10-a971-dbae6dbf5e5d",
+        "quantity": 1
+      }
+    ]
+  },
   "books": [
     {
       "id": "8ef9f86b-cdc4-49ab-88de-f641e8d0ab73",
