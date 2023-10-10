@@ -38,6 +38,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: "cart",
+    canActivate: [routeGuard],
     loadChildren: () => {
       const routes = import("./cart/cart-routes").then((a) => a.cartRoutes);
       return routes;
