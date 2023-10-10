@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { CartItemComponent } from "./cart-item.component";
 import { Book } from "src/app/book/data/book.model";
+import { CartSummaryComponent } from "./cart-summary.component";
 
 @Component({
   selector: "app-cart-ui",
   standalone: true,
-  imports: [CartItemComponent],
+  imports: [CartItemComponent, CartSummaryComponent],
   template: `
     <div class="cart-container">
       <div class="cart-items">
@@ -14,7 +15,7 @@ import { Book } from "src/app/book/data/book.model";
           (selectQuantity)="onSelectQuantity($event)"
         />
       </div>
-      <div class="cart-total"></div>
+      <app-cart-summary />
     </div>
   `,
   styles: [
@@ -30,10 +31,6 @@ import { Book } from "src/app/book/data/book.model";
       }
 
       .cart-item {
-      }
-
-      .cart-total {
-        background-color: yellow;
       }
     `,
   ],
