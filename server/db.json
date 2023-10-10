@@ -16,16 +16,28 @@
       "roles": ["editor,developer"]
     }
   ],
-  "carts": {
-    "id": "cart1",
-    "username": "john",
-    "cartItems": [
-      {
-        "bookId": "591806aa-ea46-4f10-a971-dbae6dbf5e5d",
-        "quantity": 1
-      }
-    ]
-  },
+  "carts": [
+    {
+      "id": "cart1",
+      "username": "john"
+    }
+  ],
+
+  "cartItems": [
+    {
+      "id": "itemId1",
+      "cartId": "cart1",
+      "bookId": "591806aa-ea46-4f10-a971-dbae6dbf5e5d",
+      "quantity": 1
+    },
+    {
+      "id": "itemId2",
+      "cartId": "cart1",
+      "bookId": "8ef9f86b-cdc4-49ab-88de-f641e8d0ab73",
+      "quantity": 2
+    }
+  ],
+
   "books": [
     {
       "id": "8ef9f86b-cdc4-49ab-88de-f641e8d0ab73",
