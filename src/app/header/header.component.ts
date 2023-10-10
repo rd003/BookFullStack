@@ -49,7 +49,7 @@ import { MatBadgeModule } from "@angular/material/badge";
             Manage-Books
           </button>
 
-          <button mat-icon-button color="secondary" routerLink="/cart">
+          <!-- <button mat-icon-button color="secondary" routerLink="/cart">
             <mat-icon
               [matBadge]="1"
               matBadgePosition="above after"
@@ -57,7 +57,7 @@ import { MatBadgeModule } from "@angular/material/badge";
             >
               shopping_cart
             </mat-icon>
-          </button>
+          </button> -->
 
           <button mat-button (click)="logout.emit()" routerLinkActive="active">
             Logout
@@ -75,6 +75,16 @@ import { MatBadgeModule } from "@angular/material/badge";
             Signup
           </button>
         </ng-container>
+
+        <button mat-icon-button color="secondary" routerLink="/cart">
+          <mat-icon
+            [matBadge]="1"
+            matBadgePosition="above after"
+            matBadgeColor="accent"
+          >
+            shopping_cart
+          </mat-icon>
+        </button>
 
         <a
           href="https://github.com/rd003/BookFullStack"

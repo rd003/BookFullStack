@@ -37,6 +37,13 @@ export const appRoutes: Route[] = [
       ),
   },
   {
+    path: "cart",
+    loadChildren: () => {
+      const routes = import("./cart/cart-routes").then((a) => a.cartRoutes);
+      return routes;
+    },
+  },
+  {
     path: "unauthorized",
     loadComponent: () =>
       import("./unhauthorized.component").then((a) => a.UnhauthorizedComponent),
