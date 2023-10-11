@@ -18,19 +18,25 @@ import { provideStoreDevtools } from "@ngrx/store-devtools";
 import { authInterceptor } from "./helpers/auth.interceptor";
 import { cartFeatureKey, cartReducer } from "./cart/state/cart.reducer";
 import { CartEffects } from "./cart/state/cart.effects";
+import {
+  cartItemFeatureKey,
+  cartItemReducer,
+} from "./cart/state/cart-item.reducer";
 
 const reducers = {
   [authFeatureKey]: authReducer,
   [bookFeatureKey]: bookReducer,
   [cartFeatureKey]: cartReducer,
+  [cartItemFeatureKey]: cartItemReducer,
 };
+const effects = [AuthEffects, BookEffects, CartEffects];
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
     provideHttpClient(withInterceptors([errorInterceptor, authInterceptor])),
     provideAnimations(),
     provideStore(reducers),
-    provideEffects([AuthEffects, BookEffects, CartEffects]),
+    provideEffects(effects),
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandler,
