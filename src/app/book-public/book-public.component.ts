@@ -14,6 +14,9 @@ import {
 } from "../book/state/book.selectors";
 import { BookListPublicComponent } from "./UI/book-list-public.component";
 import { BookFilterPublicComponent } from "./UI/book-filter-public.component";
+import { selectCart } from "../cart/state/cart.selector";
+import { selectCartItems } from "../cart/state/cart-item.selector";
+import { combineLatest, map } from "rxjs";
 
 @Component({
   selector: "app-book-public",
@@ -54,14 +57,34 @@ export class BookPublicComponent implements OnInit {
   loading$ = this.store.select(selectBookLoading);
   error$ = this.store.select(selectBookError);
 
-  // cart$ =this.store.select(select)
+  cart$ = this.store.select(selectCart);
+  cartItems$ = this.store.select(selectCartItems);
+
+  isCartCreated$ = this.cart$.pipe(map((a) => (a ? true : false)));
+  isCartItemsEmpty$ = this.cartItems$.pipe(
+    map((a) => (a.length > 0 ? false : true))
+  );
+  isCartExists$ = combineLatest([
+    this.isCartCreated$,
+    this.isCartItemsEmpty$,
+  ]).pipe(
+    map(([isCartCreated, isCartEmpty]) => {
+      isCartCreated && !isCartEmpty;
+    })
+  );
 
   handleBookSearch(searchTerm: string) {
     this.store.dispatch(BookActions.setSearchTerm({ searchTerm }));
     this.store.dispatch(BookActions.loadBooks());
   }
 
-  addItemToCart() {}
+  addItemToCart() {
+    if (this.isCartExists$) {
+      // increment quantity
+    } else {
+      // create cart and cartItem
+    }
+  }
 
   ngOnInit(): void {
     this.store.dispatch(BookActions.setPage({ page: null }));
