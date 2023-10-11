@@ -14,7 +14,7 @@ export class CartEffects {
       ofType(CartActions.addCart),
       switchMap((action) =>
         this.cartService.add(action.cart).pipe(
-          map((cart) => CartActions.addCart({ cart })),
+          map((cart) => CartActions.addCartSuccess({ cart })),
           catchError((error) => {
             console.log(error);
             return of(error);
@@ -29,7 +29,7 @@ export class CartEffects {
       ofType(CartActions.removeCart),
       switchMap((action) =>
         this.cartService.delete(action.id).pipe(
-          map((cart) => CartActions.removeCart({ id: action.id })),
+          map((cart) => CartActions.removeCartSuccess({ id: action.id })),
           catchError((error) => {
             console.log(error);
             return of(error);

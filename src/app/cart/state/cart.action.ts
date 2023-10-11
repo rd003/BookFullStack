@@ -12,7 +12,7 @@ export const CartActions = createActionGroup({
     "Add Cart Success": props<{ cart: Cart }>(),
     "Add Cart Error": props<{ error: HttpErrorResponse }>(),
     "Remove Cart": props<{ id: string }>(),
-    "Remove Success": props<{ id: string }>(),
+    "Remove Cart Success": props<{ id: string }>(),
     "Remove Cart Error": props<{ error: HttpErrorResponse }>(),
   },
 });

@@ -22,6 +22,7 @@ import {
   cartItemFeatureKey,
   cartItemReducer,
 } from "./cart/state/cart-item.reducer";
+import { CartItemEffects } from "./cart/state/cart-item.effect";
 
 const reducers = {
   [authFeatureKey]: authReducer,
@@ -29,7 +30,8 @@ const reducers = {
   [cartFeatureKey]: cartReducer,
   [cartItemFeatureKey]: cartItemReducer,
 };
-const effects = [AuthEffects, BookEffects, CartEffects];
+const effects = [AuthEffects, BookEffects, CartEffects, CartItemEffects];
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
