@@ -54,11 +54,14 @@ export class BookPublicComponent implements OnInit {
   loading$ = this.store.select(selectBookLoading);
   error$ = this.store.select(selectBookError);
 
+  // cart$ =this.store.select(select)
+
   handleBookSearch(searchTerm: string) {
-    // TODO: search filter is not working, we are getting value of searchTerm here.
     this.store.dispatch(BookActions.setSearchTerm({ searchTerm }));
     this.store.dispatch(BookActions.loadBooks());
   }
+
+  addItemToCart() {}
 
   ngOnInit(): void {
     this.store.dispatch(BookActions.setPage({ page: null }));
