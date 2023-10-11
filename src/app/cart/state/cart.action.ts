@@ -1,8 +1,18 @@
-import { createActionGroup, emptyProps } from "@ngrx/store";
+import { createActionGroup, emptyProps, props } from "@ngrx/store";
+import { Cart } from "../cart.model";
+import { HttpErrorResponse } from "@angular/common/http";
 
 export const CartActions = createActionGroup({
   source: "Carts",
   events: {
-    "Load Carts": emptyProps(),
+    // "Load Cart": emptyProps(),
+    // "Load Cart Success": props<{ cart: Cart }>(),
+    // "Load Carts Error": props<{ error: HttpErrorResponse }>(),
+    "Add Cart": props<{ cart: Cart }>(),
+    "Add Cart Success": props<{ cart: Cart }>(),
+    "Add Cart Error": props<{ error: HttpErrorResponse }>(),
+    "Remove Cart": props<{ id: string }>(),
+    "Remove Success": props<{ id: string }>(),
+    "Remove Cart Error": props<{ error: HttpErrorResponse }>(),
   },
 });
