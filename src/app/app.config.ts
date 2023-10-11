@@ -16,10 +16,13 @@ import { bookFeatureKey, bookReducer } from "./book/state/book.reducer";
 import { BookEffects } from "./book/state/book.effects";
 import { provideStoreDevtools } from "@ngrx/store-devtools";
 import { authInterceptor } from "./helpers/auth.interceptor";
+import { cartFeatureKey, cartReducer } from "./cart/state/cart.reducer";
+import { CartEffects } from "./cart/state/cart.effects";
 
 const reducers = {
   [authFeatureKey]: authReducer,
   [bookFeatureKey]: bookReducer,
+  [cartFeatureKey]: cartReducer,
 };
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,7 +30,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([errorInterceptor, authInterceptor])),
     provideAnimations(),
     provideStore(reducers),
-    provideEffects([AuthEffects, BookEffects]),
+    provideEffects([AuthEffects, BookEffects, CartEffects]),
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandler,

@@ -3,7 +3,7 @@ import { Cart } from "../cart.model";
 import { createReducer, on } from "@ngrx/store";
 import { CartActions } from "./cart.action";
 
-export const CartKey = "Cart";
+export const cartFeatureKey = "Cart";
 export interface CartState {
   cart: Cart | null;
   loading: boolean;
@@ -16,7 +16,7 @@ export const cartState: CartState = {
   error: null,
 };
 
-export const CartReducer = createReducer(
+export const cartReducer = createReducer(
   cartState,
   on(CartActions.addCart, (state, { cart }) => ({ ...state, loading: true })),
   on(CartActions.addCartSuccess, (state, { cart }) => ({
