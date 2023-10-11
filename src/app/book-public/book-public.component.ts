@@ -17,6 +17,9 @@ import { BookFilterPublicComponent } from "./UI/book-filter-public.component";
 import { selectCart } from "../cart/state/cart.selector";
 import { selectCartItems } from "../cart/state/cart-item.selector";
 import { combineLatest, map } from "rxjs";
+import { CartItem } from "../cart/cart.model";
+import authActions from "../auth/state/auth.actions";
+import { selectUserInfo } from "../auth/state/auth.selectors";
 
 @Component({
   selector: "app-book-public",
@@ -57,7 +60,14 @@ export class BookPublicComponent implements OnInit {
   loading$ = this.store.select(selectBookLoading);
   error$ = this.store.select(selectBookError);
 
-  cart$ = this.store.select(selectCart);
+  // Note: Everything related to cart is wrong💩
+  // cart should be selected according to user
+  // cartItem should be selected according to cart
+
+  // user
+  user$ = this.store.select(selectUserInfo);
+
+  cart$ = this.store.select(selectCart); // 💩
   cartItems$ = this.store.select(selectCartItems);
 
   isCartCreated$ = this.cart$.pipe(map((a) => (a ? true : false)));
@@ -78,7 +88,7 @@ export class BookPublicComponent implements OnInit {
     this.store.dispatch(BookActions.loadBooks());
   }
 
-  addItemToCart() {
+  addItemToCart(item: CartItem) {
     if (this.isCartExists$) {
       // increment quantity
     } else {
