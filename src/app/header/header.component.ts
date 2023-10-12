@@ -51,7 +51,7 @@ import { MatBadgeModule } from "@angular/material/badge";
 
           <button mat-icon-button color="secondary" routerLink="/cart">
             <mat-icon
-              [matBadge]="1"
+              [matBadge]="cartCount"
               matBadgePosition="above after"
               matBadgeColor="accent"
             >
@@ -111,8 +111,9 @@ import { MatBadgeModule } from "@angular/material/badge";
 })
 export class HeaderComponent {
   @Output() logout = new EventEmitter();
-  @Input() isLoggedIn!: boolean;
-  @Input() user!: User | null;
+  @Input({ required: true }) isLoggedIn!: boolean;
+  @Input({ required: true }) user!: User | null;
+  @Input({ required: true }) cartCount = 0;
 
   isInRole(requiredRoles: string[]) {
     const roles = this.user?.roles;
