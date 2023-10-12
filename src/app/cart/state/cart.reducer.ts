@@ -19,7 +19,10 @@ export const cartState: CartState = {
 export const cartReducer = createReducer(
   cartState,
 
-  on(CartActions.loadCart, (state) => ({ ...state, loading: true })),
+  on(CartActions.loadCart, (state, { username }) => ({
+    ...state,
+    loading: true,
+  })),
   on(CartActions.loadCartSuccess, (state, { cart }) => ({
     ...state,
     cart,
