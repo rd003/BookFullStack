@@ -24,6 +24,12 @@ export class CartItemService {
   }
 
   getAll(cartId: string) {
-    return this.http.get<CartItem[]>(`${this.url}?cartId=${cartId}`);
+    return this.http.get<CartItem[]>(`this.url?cartId=${cartId}`);
+  }
+
+  getCartItemsWithBook(cartId: string) {
+    return this.http.get<CartItem[]>(
+      `${this.url}?_expand=book&cartId=${cartId}`
+    );
   }
 }

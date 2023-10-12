@@ -11,9 +11,9 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatSelectModule } from "@angular/material/select";
-import { Book } from "src/app/book/data/book.model";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { tap } from "rxjs";
+import { CartItem } from "../cart.model";
 
 @Component({
   selector: "app-cart-item",
@@ -27,12 +27,12 @@ import { tap } from "rxjs";
     MatButtonModule,
   ],
   template: `
-    <div class="item">
-      <img [src]="book.ImageLink" />
+    <!-- <div class="item">
+      <img [src]="cartItem.ImageLink" />
     </div>
-    <div class="item">{{ book.Title }}</div>
-    <div class="item">{{ book.Author }}</div>
-    <div class="item">{{ book.Price }}</div>
+    <div class="item">{{ cartItem.Title }}</div>
+    <div class="item">{{ cartItem.Author }}</div>
+    <div class="item">{{ cartItem.Price }}</div>
     <div class="item">
       <mat-form-field [subscriptSizing]="'dynamic'">
         <mat-label>Qty</mat-label>
@@ -49,7 +49,7 @@ import { tap } from "rxjs";
       <button mat-icon-button>
         <mat-icon color="accent">delete</mat-icon>
       </button>
-    </div>
+    </div> -->
   `,
   styles: [
     `
@@ -81,7 +81,7 @@ import { tap } from "rxjs";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartItemComponent {
-  @Input({ required: true }) book!: Book;
+  @Input({ required: true }) cartItem!: CartItem;
   @Output() selectQuantity = new EventEmitter<number>();
   quantity = new FormControl<number>(1);
 

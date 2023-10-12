@@ -23,8 +23,3 @@ export const selectCartItemById = (props: { cartItemId: string }) =>
   createSelector(cartItemSelector, (state) =>
     state.cartItems.find((a) => a.id === props.cartItemId)
   );
-
-// export const loadCartByUsername = (props: { username: string }) =>
-//   createSelector(cartItemSelector, cartSelector, (cartItem, cart) => {
-
-//   });
