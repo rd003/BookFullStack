@@ -15,11 +15,16 @@ import {
 import { BookListPublicComponent } from "./UI/book-list-public.component";
 import { BookFilterPublicComponent } from "./UI/book-filter-public.component";
 import { selectCart } from "../cart/state/cart.selector";
-import { selectCartItems } from "../cart/state/cart-item.selector";
-import { combineLatest, map } from "rxjs";
-import { CartItem } from "../cart/cart.model";
-import authActions from "../auth/state/auth.actions";
+import {
+  selectCartItemById,
+  selectCartItems,
+} from "../cart/state/cart-item.selector";
+import { combineLatest, map, tap } from "rxjs";
+import { Cart, CartItem } from "../cart/cart.model";
 import { selectUserInfo } from "../auth/state/auth.selectors";
+import { generateGUID } from "ngx-rlibs";
+import { CartActions } from "../cart/state/cart.action";
+import { CartItemActions } from "../cart/state/cart-item.action";
 
 @Component({
   selector: "app-book-public",
@@ -60,10 +65,6 @@ export class BookPublicComponent implements OnInit {
   loading$ = this.store.select(selectBookLoading);
   error$ = this.store.select(selectBookError);
 
-  // Note: Everything related to cart is wrong💩
-  // cart should be selected according to user
-  // cartItem should be selected according to cart
-
   // user
   user$ = this.store.select(selectUserInfo);
 
@@ -89,11 +90,60 @@ export class BookPublicComponent implements OnInit {
   }
 
   addItemToCart(item: CartItem) {
-    if (this.isCartExists$) {
-      // increment quantity
-    } else {
-      // create cart and cartItem
-    }
+    if (this.isCartExists$) this.incrementQuantity(item);
+    else this.createCartEntry(item);
+  }
+
+  // increment quantity of  cart item
+  private incrementQuantity(item: CartItem) {
+    const cartItem$ = this.store.select(
+      selectCartItemById({ cartItemId: item.id })
+    );
+    cartItem$
+      .pipe(
+        tap((cartItem) => {
+          if (cartItem) {
+            cartItem.quantity = cartItem.quantity + 1;
+            this.store.dispatch(CartItemActions.updateCartItem({ cartItem }));
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  // create new entry in cart (cart & cartItem)
+  private createCartEntry(item: CartItem) {
+    // check user, if user is logged in then create cart
+    this.user$
+      .pipe(
+        tap((user) => {
+          if (user) {
+            const cart: Cart = {
+              username: user.username,
+              id: generateGUID(),
+            };
+            this.store.dispatch(CartActions.addCart({ cart }));
+          }
+        })
+      )
+      .subscribe();
+
+    // check if cart is available, because we need cartId to generate cartItem
+    // if cart is not null then, generate cartItem
+    this.cart$
+      .pipe(
+        tap((myCart) => {
+          // create new entry in cart
+          if (myCart) {
+            item.id = generateGUID();
+            item.cartId = myCart.id;
+            this.store.dispatch(
+              CartItemActions.addCartItem({ cartItem: item })
+            );
+          }
+        })
+      )
+      .subscribe();
   }
 
   ngOnInit(): void {
