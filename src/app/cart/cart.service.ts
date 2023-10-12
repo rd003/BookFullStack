@@ -25,7 +25,13 @@ export class CartService {
     return this.http.delete<any>(`${this.url}/${id}`);
   }
 
-  getAll(): Observable<Cart> {
-    return this.http.get<Cart[]>(this.url).pipe(map((a) => a[0]));
+  // getAll(): Observable<Cart[]> {
+  //   return this.http.get<Cart[]>(this.url);
+  // }
+
+  getCartByUsername(username: string): Observable<Cart> {
+    return this.http
+      .get<Cart[]>(`${this.url}?username=${username}`)
+      .pipe(map((a) => a[0]));
   }
 }
