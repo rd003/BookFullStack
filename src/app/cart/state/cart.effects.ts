@@ -13,7 +13,7 @@ export class CartEffects {
     this.actions$.pipe(
       ofType(CartActions.loadCart),
       switchMap((action) =>
-        this.cartService.getAll().pipe(
+        this.cartService.getCartByUsername(action.username).pipe(
           map((cart) => CartActions.loadCartSuccess({ cart })),
           catchError((error) => {
             console.log(error);
