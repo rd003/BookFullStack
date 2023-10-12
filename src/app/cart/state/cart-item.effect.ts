@@ -58,7 +58,7 @@ export class CartItemEffects {
     this.actions$.pipe(
       ofType(CartItemActions.loadCartItems),
       switchMap((action) =>
-        this.cartItemService.getAll(action.cartId).pipe(
+        this.cartItemService.getCartItemsWithBook(action.cartId).pipe(
           map((cartItems) =>
             CartItemActions.loadCartItemSuccess({ cartItems })
           ),

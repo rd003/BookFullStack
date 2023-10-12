@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { environment } from "src/environments/environment.development";
-import { CartItem } from "./cart.model";
+import { CartItem, CartItemModel } from "./cart.model";
 import { HttpClient } from "@angular/common/http";
 
 @Injectable({ providedIn: "root" })
@@ -28,7 +28,7 @@ export class CartItemService {
   }
 
   getCartItemsWithBook(cartId: string) {
-    return this.http.get<CartItem[]>(
+    return this.http.get<CartItemModel[]>(
       `${this.url}?_expand=book&cartId=${cartId}`
     );
   }
