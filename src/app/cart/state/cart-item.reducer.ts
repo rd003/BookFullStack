@@ -1,12 +1,12 @@
 import { HttpErrorResponse } from "@angular/common/http";
-import { CartItem } from "../cart.model";
+import { CartItemModel } from "../cart.model";
 import { createReducer, on } from "@ngrx/store";
 import { CartItemActions } from "./cart-item.action";
 
 export const cartItemFeatureKey = "CartItems";
 
 export interface CartItemState {
-  cartItems: CartItem[];
+  cartItems: CartItemModel[];
   loading: boolean;
   error: HttpErrorResponse | null;
 }
