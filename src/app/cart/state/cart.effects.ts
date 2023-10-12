@@ -9,6 +9,21 @@ export class CartEffects {
   private readonly actions$ = inject(Actions);
   private readonly cartService = inject(CartService);
 
+  loadCart = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CartActions.loadCart),
+      switchMap((action) =>
+        this.cartService.getAll().pipe(
+          map((cart) => CartActions.loadCartSuccess({ cart })),
+          catchError((error) => {
+            console.log(error);
+            return of(CartActions.loadCartError({ error }));
+          })
+        )
+      )
+    )
+  );
+
   addCart = createEffect(() =>
     this.actions$.pipe(
       ofType(CartActions.addCart),
@@ -17,7 +32,7 @@ export class CartEffects {
           map((cart) => CartActions.addCartSuccess({ cart })),
           catchError((error) => {
             console.log(error);
-            return of(error);
+            return of(CartActions.addCartError({ error }));
           })
         )
       )
@@ -32,7 +47,7 @@ export class CartEffects {
           map((cart) => CartActions.removeCartSuccess({ id: action.id })),
           catchError((error) => {
             console.log(error);
-            return of(error);
+            return of(CartActions.removeCartError({ error }));
           })
         )
       )

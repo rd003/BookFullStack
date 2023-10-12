@@ -19,6 +19,7 @@ import { tokenUtils } from "./utils/token.utils";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { AsyncPipe } from "@angular/common";
+import { CartActions } from "./cart/state/cart.action";
 
 @Component({
   standalone: true,
@@ -81,6 +82,8 @@ export class AppComponent implements OnDestroy {
             if (accessToken) {
               // set loginResponse state here on application start
               this.store.dispatch(authActions.loadAuthInfo({ accessToken }));
+              // load cart here
+              // this.store.dispatch(CartActions)
             }
           }
         }),

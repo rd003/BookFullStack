@@ -5,9 +5,9 @@ import { HttpErrorResponse } from "@angular/common/http";
 export const CartActions = createActionGroup({
   source: "Carts",
   events: {
-    // "Load Cart": emptyProps(),
-    // "Load Cart Success": props<{ cart: Cart }>(),
-    // "Load Carts Error": props<{ error: HttpErrorResponse }>(),
+    "Load Cart": emptyProps(),
+    "Load Cart Success": props<{ cart: Cart }>(),
+    "Load Cart Error": props<{ error: HttpErrorResponse }>(),
     "Add Cart": props<{ cart: Cart }>(),
     "Add Cart Success": props<{ cart: Cart }>(),
     "Add Cart Error": props<{ error: HttpErrorResponse }>(),

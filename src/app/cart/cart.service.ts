@@ -2,28 +2,30 @@ import { Injectable, inject } from "@angular/core";
 import { environment } from "src/environments/environment.development";
 import { Cart } from "./cart.model";
 import { HttpClient } from "@angular/common/http";
+import { Observable, map } from "rxjs";
 
 @Injectable()
 export class CartService {
   private readonly url = environment.apiBaseUrl + "/carts";
   private readonly http = inject(HttpClient);
-  add(cart: Cart) {
+
+  add(cart: Cart): Observable<Cart> {
     return this.http.post<Cart>(this.url, cart);
   }
 
-  update(cart: Cart) {
+  update(cart: Cart): Observable<any> {
     return this.http.put(`${this.url}/${cart.id}`, cart);
   }
 
-  getById(id: string) {
-    return this.http.get<Cart[]>(`${this.url}/${id}`);
+  getById(id: string): Observable<Cart> {
+    return this.http.get<Cart>(`${this.url}/${id}`);
   }
 
-  delete(id: string) {
+  delete(id: string): Observable<any> {
     return this.http.delete<any>(`${this.url}/${id}`);
   }
 
-  getAll(cart: Cart) {
-    return this.http.get<Cart[]>(this.url);
+  getAll(): Observable<Cart> {
+    return this.http.get<Cart[]>(this.url).pipe(map((a) => a[0]));
   }
 }
