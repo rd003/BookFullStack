@@ -83,7 +83,13 @@ export class AppComponent implements OnDestroy {
               // set loginResponse state here on application start
               this.store.dispatch(authActions.loadAuthInfo({ accessToken }));
               // load cart here
-              // this.store.dispatch(CartActions.loadCart());
+              // get username
+              const userInfo = tokenUtils.getUserFromToken(accessToken);
+              if (userInfo) {
+                const { username } = userInfo;
+                if (username)
+                  this.store.dispatch(CartActions.loadCart({ username }));
+              }
             }
           }
         }),
