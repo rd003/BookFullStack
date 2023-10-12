@@ -8,7 +8,7 @@ import {
   selectCartItems,
 } from "./state/cart-item.selector";
 import { Observable } from "rxjs";
-import { CartItem } from "./cart.model";
+import { CartItemModel } from "./cart.model";
 import { AsyncPipe, NgFor, NgIf } from "@angular/common";
 import { HttpErrorResponse } from "@angular/common/http";
 
@@ -25,10 +25,13 @@ import { HttpErrorResponse } from "@angular/common/http";
           Error occured
         </ng-container>
         <ng-template #noerror>
-          <app-cart-item
-            [book]="book"
-            (selectQuantity)="onSelectQuantity($event)"
-          />
+          <ng-container *ngIf="cartItems$ | async as cartItems">
+            <app-cart-item
+              *ngFor="let cartItem of cartItems; trackBy: trackById"
+              [cartItem]="cartItem"
+              (selectQuantity)="onSelectQuantity($event)"
+            />
+          </ng-container>
         </ng-template>
       </div>
       <app-cart-summary />
@@ -51,7 +54,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 })
 export class CartComponent {
   store = inject(Store);
-  cartItems$: Observable<CartItem[]> = this.store.select(selectCartItems);
+  cartItems$: Observable<CartItemModel[]> = this.store.select(selectCartItems);
   loading$: Observable<boolean> = this.store.select(selectCartItemLoading);
   error$: Observable<HttpErrorResponse | null> =
     this.store.select(selectCartItemError);
@@ -69,6 +72,10 @@ export class CartComponent {
   //   Year: 1958,
   //   Price: 243,
   // };
+
+  trackById(index: number, cartItem: CartItemModel) {
+    return cartItem.id;
+  }
 
   onSelectQuantity(quantity: number) {
     //TODO: add quantity to store
