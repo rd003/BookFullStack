@@ -57,8 +57,8 @@ export class CartItemEffects {
   getCartItems = createEffect(() =>
     this.actions$.pipe(
       ofType(CartItemActions.loadCartItems),
-      switchMap(() =>
-        this.cartItemService.getAll().pipe(
+      switchMap((action) =>
+        this.cartItemService.getAll(action.cartId).pipe(
           map((cartItems) =>
             CartItemActions.loadCartItemSuccess({ cartItems })
           ),
