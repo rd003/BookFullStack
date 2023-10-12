@@ -19,8 +19,8 @@ import {
   selectCartItemById,
   selectCartItems,
 } from "../cart/state/cart-item.selector";
-import { combineLatest, map, tap } from "rxjs";
-import { Cart, CartItem } from "../cart/cart.model";
+import { Observable, combineLatest, map, tap } from "rxjs";
+import { Cart, CartItem, CartItemModel } from "../cart/cart.model";
 import { selectUserInfo } from "../auth/state/auth.selectors";
 import { generateGUID } from "ngx-rlibs";
 import { CartActions } from "../cart/state/cart.action";
@@ -68,8 +68,8 @@ export class BookPublicComponent implements OnInit {
   // user
   user$ = this.store.select(selectUserInfo);
 
-  cart$ = this.store.select(selectCart); // 💩
-  cartItems$ = this.store.select(selectCartItems);
+  cart$: Observable<Cart | null> = this.store.select(selectCart); // 💩
+  cartItems$: Observable<CartItemModel[]> = this.store.select(selectCartItems);
 
   isCartCreated$ = this.cart$.pipe(map((a) => (a ? true : false)));
   isCartItemsEmpty$ = this.cartItems$.pipe(
@@ -101,9 +101,14 @@ export class BookPublicComponent implements OnInit {
     );
     cartItem$
       .pipe(
-        tap((cartItem) => {
-          if (cartItem) {
-            cartItem.quantity = cartItem.quantity + 1;
+        tap((cartItemModel) => {
+          if (cartItemModel) {
+            const cartItem: CartItem = {
+              id: cartItemModel.id,
+              cartId: cartItemModel.cartId,
+              bookId: cartItemModel.book.id,
+              quantity: cartItemModel.quantity + 1,
+            };
             this.store.dispatch(CartItemActions.updateCartItem({ cartItem }));
           }
         })
