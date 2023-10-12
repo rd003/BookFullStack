@@ -4,7 +4,7 @@ import { Cart } from "./cart.model";
 import { HttpClient } from "@angular/common/http";
 import { Observable, map } from "rxjs";
 
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class CartService {
   private readonly url = environment.apiBaseUrl + "/carts";
   private readonly http = inject(HttpClient);

@@ -3,7 +3,7 @@ import { environment } from "src/environments/environment.development";
 import { CartItem } from "./cart.model";
 import { HttpClient } from "@angular/common/http";
 
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class CartItemService {
   private readonly url = environment.apiBaseUrl + "/cartItems";
   private readonly http = inject(HttpClient);
@@ -24,6 +24,6 @@ export class CartItemService {
   }
 
   getAll(cartId: string) {
-    return this.http.get<CartItem[]>(`this.url?cartId=${cartId}`);
+    return this.http.get<CartItem[]>(`${this.url}?cartId=${cartId}`);
   }
 }

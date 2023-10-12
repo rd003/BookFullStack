@@ -14,12 +14,14 @@ import {
   selectLoginState,
   selectUserInfo,
 } from "./auth/state/auth.selectors";
-import { Subject, takeUntil, tap } from "rxjs";
+import { Subject, switchMap, takeUntil, tap } from "rxjs";
 import { tokenUtils } from "./utils/token.utils";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { AsyncPipe } from "@angular/common";
 import { CartActions } from "./cart/state/cart.action";
+import { selectCart } from "./cart/state/cart.selector";
+import { CartItemActions } from "./cart/state/cart-item.action";
 
 @Component({
   standalone: true,
@@ -62,6 +64,7 @@ export class AppComponent implements OnDestroy {
   loginResponse$ = this.store.select(selectLoginResponseState);
   isLoggedIn$ = this.store.select(selectLoginState);
   userInfo$ = this.store.select(selectUserInfo);
+  cart$ = this.store.select(selectCart);
 
   logout() {
     this.store.dispatch(authActions.logout());
@@ -90,7 +93,19 @@ export class AppComponent implements OnDestroy {
                 if (username)
                   this.store.dispatch(CartActions.loadCart({ username }));
               }
+              // load cart item by cartId
+              // retrieve cart
             }
+          }
+        }),
+        switchMap(() => this.cart$),
+        tap((cart) => {
+          console.log("before loading cart item");
+          if (cart) {
+            console.log("cart items are loaded");
+            this.store.dispatch(
+              CartItemActions.loadCartItems({ cartId: cart.id })
+            );
           }
         }),
         takeUntilDestroyed()
