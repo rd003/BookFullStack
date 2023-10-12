@@ -23,7 +23,7 @@ export class CartItemService {
     return this.http.delete<any>(`${this.url}/${id}`);
   }
 
-  getAll() {
-    return this.http.get<CartItem[]>(this.url);
+  getAll(cartId: string) {
+    return this.http.get<CartItem[]>(`this.url?cartId=${cartId}`);
   }
 }
