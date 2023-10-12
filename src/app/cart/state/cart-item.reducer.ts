@@ -63,7 +63,7 @@ export const cartItemReducer = createReducer(
     loading: false,
     error,
   })),
-  on(CartItemActions.loadCartItems, (state) => ({
+  on(CartItemActions.loadCartItems, (state, { cartId }) => ({
     ...state,
     loading: true,
   })),
