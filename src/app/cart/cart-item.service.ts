@@ -2,13 +2,32 @@ import { Injectable, inject } from "@angular/core";
 import { environment } from "src/environments/environment.development";
 import { CartItem, CartItemModel } from "./cart.model";
 import { HttpClient } from "@angular/common/http";
+import { Observable, map, switchMap } from "rxjs";
+import { BookService } from "../book/data/book.service";
 
 @Injectable({ providedIn: "root" })
 export class CartItemService {
   private readonly url = environment.apiBaseUrl + "/cartItems";
   private readonly http = inject(HttpClient);
+  private readonly bookService = inject(BookService);
   add(cartItem: CartItem) {
-    return this.http.post<CartItem>(this.url, cartItem);
+    const createdItem$ = this.http.post<CartItem>(this.url, cartItem);
+
+    const itemWithBooks$: Observable<CartItemModel> = createdItem$.pipe(
+      switchMap((createdItem) =>
+        this.bookService.findBookById(createdItem.id).pipe(
+          map((book) => {
+            const createdItemWithBook: CartItemModel = {
+              id: createdItem.id,
+              book: book,
+              quantity: createdItem.quantity,
+              cartId: createdItem.cartId,
+            };
+            return createdItemWithBook;
+          })
+        )
+      )
+    );
   }
 
   update(cartItem: CartItem) {
