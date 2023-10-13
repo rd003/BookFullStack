@@ -10,6 +10,7 @@ export class CartItemService {
   private readonly url = environment.apiBaseUrl + "/cartItems";
   private readonly http = inject(HttpClient);
   private readonly bookService = inject(BookService);
+
   add(cartItem: CartItem): Observable<CartItemModel> {
     const createdItem$ = this.http.post<CartItem>(this.url, cartItem);
 
@@ -32,23 +33,37 @@ export class CartItemService {
     return itemWithBooks$;
   }
 
-  update(cartItem: CartItem) {
-    return this.http.put(`${this.url}/${cartItem.id}`, cartItem);
+  update(cartItem: CartItem): Observable<CartItemModel> {
+    this.http.put(`${this.url}/${cartItem.id}`, cartItem);
+    const cartItemModel: Observable<CartItemModel> = this.bookService
+      .findBookById(cartItem.id)
+      .pipe(
+        map((book) => {
+          const createdItemWithBook: CartItemModel = {
+            id: cartItem.id,
+            book: book,
+            quantity: cartItem.quantity,
+            cartId: cartItem.cartId,
+          };
+          return createdItemWithBook;
+        })
+      );
+    return cartItemModel;
   }
 
-  getById(id: string) {
-    return this.http.get<CartItem[]>(`${this.url}/${id}`);
+  getById(id: string): Observable<CartItem> {
+    return this.http.get<CartItem>(`${this.url}/${id}`);
   }
 
-  delete(id: string) {
+  delete(id: string): Observable<any> {
     return this.http.delete<any>(`${this.url}/${id}`);
   }
 
-  getAll(cartId: string) {
+  getAll(cartId: string): Observable<CartItem[]> {
     return this.http.get<CartItem[]>(`this.url?cartId=${cartId}`);
   }
 
-  getCartItemsWithBook(cartId: string) {
+  getCartItemsWithBook(cartId: string): Observable<CartItemModel[]> {
     return this.http.get<CartItemModel[]>(
       `${this.url}?_expand=book&cartId=${cartId}`
     );
