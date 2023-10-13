@@ -6,6 +6,9 @@ import {
   selectCartItemError,
   selectCartItemLoading,
   selectCartItems,
+  selectCartTotal,
+  selectSubTotal,
+  selectTax,
 } from "./state/cart-item.selector";
 import { Observable, map } from "rxjs";
 import { CartItemModel } from "./cart.model";
@@ -18,29 +21,33 @@ import { HttpErrorResponse } from "@angular/common/http";
   imports: [CartItemComponent, CartSummaryComponent, NgIf, NgFor, AsyncPipe],
   template: `
     <div class="cart-container">
-      <div class="cart-items">
-        <ng-container *ngIf="loading$ | async"> loading... </ng-container>
-        <!-- if not error then #no-orror -->
-        <ng-container *ngIf="error$ | async; else noerror">
-          Error occured
-        </ng-container>
-        <ng-template #noerror>
-          <ng-container *ngIf="cartItems$ | async as cartItems">
-            <ng-container *ngIf="cartItems.length > 0; else noitems">
+      <ng-container *ngIf="loading$ | async"> loading... </ng-container>
+      <!-- if not error then #no-orror -->
+      <ng-container *ngIf="error$ | async; else noerror">
+        Error occured
+      </ng-container>
+      <ng-template #noerror>
+        <ng-container *ngIf="cartItems$ | async as cartItems">
+          <ng-container *ngIf="cartItems.length > 0; else noitems">
+            <div class="cart-items">
               <app-cart-item
                 *ngFor="let cartItem of cartItems; trackBy: trackById"
                 [cartItem]="cartItem"
                 (selectQuantity)="onSelectQuantity($event)"
               />
-              <app-cart-summary [subTotal]="0" [tax]="0" [total]="0" />
-            </ng-container>
-
-            <ng-template #noitems>
-              <h3>No items in the cart. Please <a href="/books">add.</a></h3>
-            </ng-template>
+            </div>
+            <app-cart-summary
+              [subTotal]="(subTotal$ | async) ?? 0"
+              [tax]="(tax$ | async) ?? 0"
+              [total]="(total$ | async) ?? 0"
+            />
           </ng-container>
-        </ng-template>
-      </div>
+
+          <ng-template #noitems>
+            <h3>No items in the cart. Please <a href="/books">add.</a></h3>
+          </ng-template>
+        </ng-container>
+      </ng-template>
     </div>
   `,
   styles: [
@@ -61,7 +68,9 @@ import { HttpErrorResponse } from "@angular/common/http";
 export class CartComponent {
   store = inject(Store);
   cartItems$: Observable<CartItemModel[]> = this.store.select(selectCartItems);
-
+  subTotal$: Observable<number> = this.store.select(selectSubTotal);
+  tax$: Observable<number> = this.store.select(selectTax);
+  total$: Observable<number> = this.store.select(selectCartTotal);
   loading$: Observable<boolean> = this.store.select(selectCartItemLoading);
   error$: Observable<HttpErrorResponse | null> =
     this.store.select(selectCartItemError);
