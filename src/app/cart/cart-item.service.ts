@@ -10,7 +10,7 @@ export class CartItemService {
   private readonly url = environment.apiBaseUrl + "/cartItems";
   private readonly http = inject(HttpClient);
   private readonly bookService = inject(BookService);
-  add(cartItem: CartItem) {
+  add(cartItem: CartItem): Observable<CartItemModel> {
     const createdItem$ = this.http.post<CartItem>(this.url, cartItem);
 
     const itemWithBooks$: Observable<CartItemModel> = createdItem$.pipe(
@@ -28,6 +28,8 @@ export class CartItemService {
         )
       )
     );
+
+    return itemWithBooks$;
   }
 
   update(cartItem: CartItem) {
