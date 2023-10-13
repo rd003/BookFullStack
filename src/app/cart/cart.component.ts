@@ -11,9 +11,10 @@ import {
   selectTax,
 } from "./state/cart-item.selector";
 import { Observable, map } from "rxjs";
-import { CartItemModel } from "./cart.model";
+import { CartItem, CartItemModel } from "./cart.model";
 import { AsyncPipe, NgFor, NgIf } from "@angular/common";
 import { HttpErrorResponse } from "@angular/common/http";
+import { CartItemActions } from "./state/cart-item.action";
 
 @Component({
   selector: "app-cart",
@@ -79,8 +80,19 @@ export class CartComponent {
     return cartItem.id;
   }
 
-  onSelectQuantity(quantity: number) {
+  onSelectQuantity(data: { cartItem: CartItemModel; newQuantity: number }) {
     //TODO: add quantity to store
-    // cartItem:CartItem
+    const { cartItem, newQuantity } = data;
+    const updatedCartItem: CartItem = {
+      id: cartItem.id,
+      bookId: cartItem.book.id,
+      cartId: cartItem.cartId,
+      quantity: newQuantity,
+    };
+    this.store.dispatch(
+      CartItemActions.updateCartItem({ cartItem: updatedCartItem })
+    );
   }
+
+  // TODO: OnDeleteItem
 }

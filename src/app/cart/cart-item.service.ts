@@ -36,7 +36,7 @@ export class CartItemService {
   update(cartItem: CartItem): Observable<CartItemModel> {
     this.http.put(`${this.url}/${cartItem.id}`, cartItem);
     const cartItemModel: Observable<CartItemModel> = this.bookService
-      .findBookById(cartItem.id)
+      .findBookById(cartItem.bookId)
       .pipe(
         map((book) => {
           const createdItemWithBook: CartItemModel = {

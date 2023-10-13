@@ -13,7 +13,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatSelectModule } from "@angular/material/select";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { tap } from "rxjs";
-import { CartItemModel } from "../cart.model";
+import { CartItem, CartItemModel } from "../cart.model";
 
 @Component({
   selector: "app-cart-item",
@@ -63,6 +63,7 @@ import { CartItemModel } from "../cart.model";
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a shadow */
         border: 1px solid rgb(78, 78, 78);
         border-radius: 10px;
+        margin-bottom: 5px;
       }
 
       img {
@@ -82,7 +83,10 @@ import { CartItemModel } from "../cart.model";
 })
 export class CartItemComponent {
   @Input({ required: true }) cartItem!: CartItemModel;
-  @Output() selectQuantity = new EventEmitter<number>();
+  @Output() selectQuantity = new EventEmitter<{
+    cartItem: CartItemModel;
+    newQuantity: number;
+  }>();
   quantity = new FormControl<number>(1);
 
   trackByFn(index: number, qty: number) {
@@ -93,7 +97,11 @@ export class CartItemComponent {
     this.quantity.valueChanges
       .pipe(
         tap((qty) => {
-          if (qty) this.selectQuantity.emit(qty);
+          if (qty)
+            this.selectQuantity.emit({
+              cartItem: this.cartItem,
+              newQuantity: qty,
+            });
         }),
         takeUntilDestroyed()
       )

@@ -37,13 +37,16 @@ export const cartItemReducer = createReducer(
     ...state,
     loading: true,
   })),
-  on(CartItemActions.updateCartItemSuccess, (state, { cartItem }) => ({
-    ...state,
-    loading: false,
-    cartItems: state.cartItems.map((a) =>
-      a.cartId === cartItem.id ? cartItem : a
-    ),
-  })),
+  on(CartItemActions.updateCartItemSuccess, (state, { cartItem }) => {
+    const newState = {
+      ...state,
+      loading: false,
+      cartItems: state.cartItems.map((a) =>
+        a.cartId === cartItem.id ? cartItem : a
+      ),
+    };
+    return newState;
+  }),
   on(CartItemActions.updateCartItemFailure, (state, { error }) => ({
     ...state,
     loading: false,

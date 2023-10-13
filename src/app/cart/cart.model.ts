@@ -9,14 +9,14 @@ export interface CartItem {
   id: string;
   cartId: string;
   bookId: string;
-  quantity: string;
+  quantity: number;
 }
 
 export interface CartItemModel {
   id: string;
   cartId: string;
   book: Book;
-  quantity: string;
+  quantity: number;
 }
 
 export interface UserCart {
