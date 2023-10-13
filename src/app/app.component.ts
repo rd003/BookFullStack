@@ -74,6 +74,7 @@ export class AppComponent implements OnDestroy {
 
   logout() {
     this.store.dispatch(authActions.logout());
+    // empty cart state
     this.snackBar.open("Successfully logged out", "Dismis", {
       duration: 1000,
     });
@@ -106,9 +107,7 @@ export class AppComponent implements OnDestroy {
         }),
         switchMap(() => this.cart$),
         tap((cart) => {
-          console.log("before loading cart item");
           if (cart) {
-            console.log("cart items are loaded");
             this.store.dispatch(
               CartItemActions.loadCartItems({ cartId: cart.id })
             );

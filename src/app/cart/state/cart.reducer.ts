@@ -53,5 +53,9 @@ export const cartReducer = createReducer(
   on(CartActions.addCartError, (state, { error }) => ({
     ...state,
     loading: false,
+  })),
+  on(CartActions.emptyCartState, (state) => ({
+    ...state,
+    cart: null,
   }))
 );
