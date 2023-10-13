@@ -7,7 +7,7 @@ import {
   selectCartItemLoading,
   selectCartItems,
 } from "./state/cart-item.selector";
-import { Observable } from "rxjs";
+import { Observable, map } from "rxjs";
 import { CartItemModel } from "./cart.model";
 import { AsyncPipe, NgFor, NgIf } from "@angular/common";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -26,15 +26,21 @@ import { HttpErrorResponse } from "@angular/common/http";
         </ng-container>
         <ng-template #noerror>
           <ng-container *ngIf="cartItems$ | async as cartItems">
-            <app-cart-item
-              *ngFor="let cartItem of cartItems; trackBy: trackById"
-              [cartItem]="cartItem"
-              (selectQuantity)="onSelectQuantity($event)"
-            />
+            <ng-container *ngIf="cartItems.length > 0; else noitems">
+              <app-cart-item
+                *ngFor="let cartItem of cartItems; trackBy: trackById"
+                [cartItem]="cartItem"
+                (selectQuantity)="onSelectQuantity($event)"
+              />
+              <app-cart-summary [subTotal]="0" [tax]="0" [total]="0" />
+            </ng-container>
+
+            <ng-template #noitems>
+              <h3>No items in the cart. Please <a href="/books">add.</a></h3>
+            </ng-template>
           </ng-container>
         </ng-template>
       </div>
-      <app-cart-summary />
     </div>
   `,
   styles: [
@@ -55,23 +61,10 @@ import { HttpErrorResponse } from "@angular/common/http";
 export class CartComponent {
   store = inject(Store);
   cartItems$: Observable<CartItemModel[]> = this.store.select(selectCartItems);
+
   loading$: Observable<boolean> = this.store.select(selectCartItemLoading);
   error$: Observable<HttpErrorResponse | null> =
     this.store.select(selectCartItemError);
-
-  //TODO: remove after UI testing
-  // book: Book = {
-  //   id: "8ef9f86b-cdc4-49ab-88de-f641e8d0ab73",
-  //   Author: "Chinua Achebe",
-  //   Country: "Nigeria",
-  //   ImageLink: "assets/images/things-fall-apart.jpg",
-  //   Language: "English",
-  //   Link: "https://en.wikipedia.org/wiki/Things_Fall_Apart\n",
-  //   Pages: 209,
-  //   Title: "Things Fall Apart",
-  //   Year: 1958,
-  //   Price: 243,
-  // };
 
   trackById(index: number, cartItem: CartItemModel) {
     return cartItem.id;
@@ -79,5 +72,6 @@ export class CartComponent {
 
   onSelectQuantity(quantity: number) {
     //TODO: add quantity to store
+    // cartItem:CartItem
   }
 }

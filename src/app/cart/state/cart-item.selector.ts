@@ -23,3 +23,18 @@ export const selectCartItemById = (props: { cartItemId: string }) =>
   createSelector(cartItemSelector, (state) =>
     state.cartItems.find((a) => a.id === props.cartItemId)
   );
+
+export const selectSubTotal = createSelector(selectCartItems, (state) =>
+  state.reduce((a, c) => a + c.book.Price, 0)
+);
+
+export const selectTax = createSelector(
+  selectSubTotal,
+  (state) => state * 0.08
+);
+
+export const selectCartTotal = createSelector(
+  selectSubTotal,
+  selectTax,
+  (subTotal, tax) => subTotal + tax
+);

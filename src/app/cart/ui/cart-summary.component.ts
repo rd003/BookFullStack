@@ -1,24 +1,23 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 
 @Component({
   selector: "app-cart-summary",
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="summary-item">
       <div class="summary-key">SubTotal</div>
-      <div class="summary-value">₹857.00</div>
+      <div class="summary-value">₹{{ subTotal }}</div>
     </div>
 
     <div class="summary-item">
-      <div class="summary-key">Tax</div>
-      <div class="summary-value">₹79.27</div>
+      <div class="summary-key">Taxes</div>
+      <div class="summary-value">₹{{ tax }}</div>
     </div>
 
     <div class="summary-item">
       <div class="summary-key bolder">Total</div>
-      <div class="summary-value bolder">₹936.27</div>
+      <div class="summary-value bolder">₹{{ total }}</div>
     </div>
   `,
   styles: [
@@ -56,4 +55,8 @@ import { CommonModule } from "@angular/common";
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CartSummaryComponent {}
+export class CartSummaryComponent {
+  @Input({ required: true }) subTotal!: Number;
+  @Input({ required: true }) tax!: Number;
+  @Input({ required: true }) total!: Number;
+}
