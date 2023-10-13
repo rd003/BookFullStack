@@ -75,6 +75,9 @@ export class AppComponent implements OnDestroy {
   logout() {
     this.store.dispatch(authActions.logout());
     // empty cart state
+    this.store.dispatch(CartActions.emptyCartState());
+    // empty cart Item state
+    this.store.dispatch(CartItemActions.emptyCartItemState());
     this.snackBar.open("Successfully logged out", "Dismis", {
       duration: 1000,
     });
