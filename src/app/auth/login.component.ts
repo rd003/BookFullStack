@@ -12,12 +12,28 @@ import {
   selectLoginErrorState,
   selectLoginLoadingState,
   selectLoginState,
+  selectUserInfo,
 } from "./state/auth.selectors";
 import { AsyncPipe, NgIf } from "@angular/common";
-import { Subject, map, takeUntil, tap } from "rxjs";
+import {
+  EMPTY,
+  Observable,
+  Subject,
+  combineLatest,
+  map,
+  of,
+  switchMap,
+  takeUntil,
+  tap,
+} from "rxjs";
 import { Router } from "@angular/router";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { selectCart } from "../cart/state/cart.selector";
+import { Cart } from "../cart/cart.model";
+import { tokenUtils } from "../utils/token.utils";
+import { CartActions } from "../cart/state/cart.action";
+import { CartItemActions } from "../cart/state/cart-item.action";
 
 @Component({
   selector: "angular-monorepo-login",
@@ -57,6 +73,9 @@ export class LoginComponent {
   @ViewChild(LoginFormComponent, { static: true })
   loginFormComponent!: LoginFormComponent;
   loading$ = this.store.select(selectLoginLoadingState);
+  userInfo$ = this.store.select(selectUserInfo);
+
+  cart$: Observable<Cart | null> = this.store.select(selectCart);
 
   error$ = this.store
     .select(selectLoginErrorState)
@@ -73,21 +92,47 @@ export class LoginComponent {
     )
     .subscribe();
 
-  isLoggedIn$ = this.store.select(selectLoginState).pipe(
+  doLogin$ = combineLatest([this.userInfo$, this.cart$]).pipe(
+    switchMap(([userInfo, cart]) => {
+      if (userInfo) {
+        const { username } = userInfo;
+        if (username) this.store.dispatch(CartActions.loadCart({ username }));
+      }
+      if (cart) {
+        this.store.dispatch(CartItemActions.loadCartItems({ cartId: cart.id }));
+      }
+      return userInfo === null ? of(false) : of(true);
+    }),
     tap((loggedIn) => {
       if (loggedIn) {
         this.snackbar.open("Suceessfully logged in", "dismis", {
           duration: 1000,
         });
+
         this.router.navigate(["/dashboard"]);
       }
     }),
     takeUntil(this.destroyed$)
   );
 
+  // isLoggedIn$ = this.store.select(selectLoginState).pipe(
+  //   tap((loggedIn) => {
+  //     if (loggedIn) {
+  //       this.snackbar.open("Suceessfully logged in", "dismis", {
+  //         duration: 1000,
+  //       });
+
+  //       this.router.navigate(["/dashboard"]);
+  //     }
+  //   }),
+  //   takeUntil(this.destroyed$)
+  // );
+
   onSubmit(loginData: LoginModel) {
     this.store.dispatch(authActions.login({ login: loginData }));
-    this.isLoggedIn$.subscribe();
+    this.doLogin$.subscribe();
+    //this.isLoggedIn$.subscribe();
+
     //TODO: Reset form if authentication failed.
   }
 
