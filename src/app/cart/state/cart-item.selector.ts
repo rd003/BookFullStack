@@ -24,17 +24,18 @@ export const selectCartItemById = (props: { cartItemId: string }) =>
     state.cartItems.find((a) => a.id === props.cartItemId)
   );
 
-export const selectSubTotal = createSelector(selectCartItems, (state) =>
-  state.reduce((a, c) => a + c.book.Price, 0)
-);
+export const selectSubTotal = createSelector(selectCartItems, (state) => {
+  const subTotal = state.reduce((a, c) => a + c.book.Price * c.quantity, 0);
+  return Number(subTotal.toFixed(2));
+});
 
-export const selectTax = createSelector(
-  selectSubTotal,
-  (state) => state * 0.08
-);
+export const selectTax = createSelector(selectSubTotal, (state) => {
+  const taxes = state * 0.08;
+  return Number(taxes.toFixed(2));
+});
 
 export const selectCartTotal = createSelector(
   selectSubTotal,
   selectTax,
-  (subTotal, tax) => subTotal + tax
+  (subTotal, tax) => Number((subTotal + tax).toFixed(2))
 );

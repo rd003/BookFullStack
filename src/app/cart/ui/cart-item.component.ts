@@ -5,6 +5,7 @@ import {
   EventEmitter,
   Input,
   Output,
+  OnInit,
 } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -13,7 +14,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatSelectModule } from "@angular/material/select";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { tap } from "rxjs";
-import { CartItem, CartItemModel } from "../cart.model";
+import { CartItemModel } from "../cart.model";
 
 @Component({
   selector: "app-cart-item",
@@ -81,7 +82,7 @@ import { CartItem, CartItemModel } from "../cart.model";
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CartItemComponent {
+export class CartItemComponent implements OnInit {
   @Input({ required: true }) cartItem!: CartItemModel;
   @Output() deleteItem = new EventEmitter<string>();
   @Output() selectQuantity = new EventEmitter<{
@@ -107,5 +108,9 @@ export class CartItemComponent {
         takeUntilDestroyed()
       )
       .subscribe();
+  }
+
+  ngOnInit(): void {
+    this.quantity.setValue(this.cartItem.quantity);
   }
 }
