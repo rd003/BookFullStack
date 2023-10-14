@@ -21,7 +21,10 @@ import {
 } from "../cart/state/cart-item.selector";
 import { Observable, combineLatest, map, tap } from "rxjs";
 import { Cart, CartItem, CartItemModel } from "../cart/cart.model";
-import { selectUserInfo } from "../auth/state/auth.selectors";
+import {
+  selectLoginResponseState,
+  selectUserInfo,
+} from "../auth/state/auth.selectors";
 import { generateGUID } from "ngx-rlibs";
 import { CartActions } from "../cart/state/cart.action";
 import { CartItemActions } from "../cart/state/cart-item.action";
@@ -74,6 +77,12 @@ export class BookPublicComponent implements OnInit {
 
   // user
   user$ = this.store.select(selectUserInfo);
+  isLoggedIn$ = this.store.select(selectLoginResponseState).pipe(
+    map((a) => {
+      const loginStatus = a ? true : false;
+      return loginStatus;
+    })
+  );
 
   cart$: Observable<Cart | null> = this.store.select(selectCart);
   cartItems$: Observable<CartItemModel[]> = this.store.select(selectCartItems);
@@ -97,6 +106,18 @@ export class BookPublicComponent implements OnInit {
   }
 
   addItemToCart(book: Book) {
+    combineLatest([this.isLoggedIn$, this.isCartExists$])
+      .pipe(
+        tap(([isLoggedIn, isCartExist]) => {
+          // getting infinite loop here
+          // use something like distinct
+          if (!isLoggedIn) alert("Please login first");
+          else {
+            alert(isCartExist);
+          }
+        })
+      )
+      .subscribe();
     // try {
     //   if (this.isCartExists$) {
     //     // find cartitem by bookId
