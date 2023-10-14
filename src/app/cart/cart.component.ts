@@ -35,6 +35,7 @@ import { CartItemActions } from "./state/cart-item.action";
                 *ngFor="let cartItem of cartItems; trackBy: trackById"
                 [cartItem]="cartItem"
                 (selectQuantity)="onSelectQuantity($event)"
+                (deleteItem)="onDeleteItem($event)"
               />
             </div>
             <app-cart-summary
@@ -45,7 +46,7 @@ import { CartItemActions } from "./state/cart-item.action";
           </ng-container>
 
           <ng-template #noitems>
-            <h3>No items in the cart. Please <a href="/books">add.</a></h3>
+            <h3>No items in the cart🥱. Please <a href="/books">add 🛒.</a></h3>
           </ng-template>
         </ng-container>
       </ng-template>
@@ -94,5 +95,9 @@ export class CartComponent {
     );
   }
 
-  // TODO: OnDeleteItem
+  onDeleteItem(id: string) {
+    if (window.confirm("Are you sure to delete?")) {
+      this.store.dispatch(CartItemActions.removeCartItem({ id }));
+    }
+  }
 }

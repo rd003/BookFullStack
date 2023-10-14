@@ -46,7 +46,7 @@ import { CartItem, CartItemModel } from "../cart.model";
       </mat-form-field>
     </div>
     <div class="item">
-      <button mat-icon-button>
+      <button mat-icon-button (click)="deleteItem.emit(cartItem.id)">
         <mat-icon color="accent">delete</mat-icon>
       </button>
     </div>
@@ -83,6 +83,7 @@ import { CartItem, CartItemModel } from "../cart.model";
 })
 export class CartItemComponent {
   @Input({ required: true }) cartItem!: CartItemModel;
+  @Output() deleteItem = new EventEmitter<string>();
   @Output() selectQuantity = new EventEmitter<{
     cartItem: CartItemModel;
     newQuantity: number;
