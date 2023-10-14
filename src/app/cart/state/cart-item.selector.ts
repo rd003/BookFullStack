@@ -39,3 +39,9 @@ export const selectCartTotal = createSelector(
   selectTax,
   (subTotal, tax) => Number((subTotal + tax).toFixed(2))
 );
+
+export const selectCartItemByBookId = (props: { bookId: string }) =>
+  createSelector(selectCartItems, (cartItems) => {
+    const item = cartItems.find((a) => a.book.id === props.bookId);
+    return item;
+  });

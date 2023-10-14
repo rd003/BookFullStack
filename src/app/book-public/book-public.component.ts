@@ -26,6 +26,7 @@ import { generateGUID } from "ngx-rlibs";
 import { CartActions } from "../cart/state/cart.action";
 import { CartItemActions } from "../cart/state/cart-item.action";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { Book } from "../book/data/book.model";
 
 @Component({
   selector: "app-book-public",
@@ -46,7 +47,10 @@ import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
       <ng-container *ngIf="books$ | async as books">
         <ng-container *ngIf="books && books.length > 0; else nodata">
           <app-book-filter-public (OnBookSearch)="handleBookSearch($event)" />
-          <app-book-list-public [books]="books" />
+          <app-book-list-public
+            [books]="books"
+            (addToCart)="addItemToCart($event)"
+          />
         </ng-container>
         <ng-template #nodata> No books found </ng-template>
       </ng-container>
@@ -83,7 +87,7 @@ export class BookPublicComponent implements OnInit {
     this.isCartItemsEmpty$,
   ]).pipe(
     map(([isCartCreated, isCartEmpty]) => {
-      isCartCreated && !isCartEmpty;
+      return isCartCreated && !isCartEmpty;
     })
   );
 
@@ -92,19 +96,21 @@ export class BookPublicComponent implements OnInit {
     this.store.dispatch(BookActions.loadBooks());
   }
 
-  addItemToCart(item: CartItem) {
-    try {
-      if (this.isCartExists$) this.incrementQuantity(item);
-      else this.createCartEntry(item);
-      this.snackBar.open("Item added to cart", "dismis", {
-        duration: 1000,
-      });
-    } catch (error: any) {
-      console.log(error);
-      this.snackBar.open("Error on adding item", "dismis", {
-        duration: 1000,
-      });
-    }
+  addItemToCart(book: Book) {
+    // try {
+    //   if (this.isCartExists$) {
+    //     // find cartitem by bookId
+    //     this.incrementQuantity(item);
+    //   } else this.createCartEntry(book.id);
+    //   this.snackBar.open("Item added to cart", "dismis", {
+    //     duration: 1000,
+    //   });
+    // } catch (error: any) {
+    //   console.log(error);
+    //   this.snackBar.open("Error on adding item", "dismis", {
+    //     duration: 1000,
+    //   });
+    // }
   }
 
   // increment quantity of  cart item
@@ -130,7 +136,7 @@ export class BookPublicComponent implements OnInit {
   }
 
   // create new entry in cart (cart & cartItem)
-  private createCartEntry(item: CartItem) {
+  private createCartEntry(bookId: string) {
     // check user, if user is logged in then create cart
     this.user$
       .pipe(
@@ -153,11 +159,13 @@ export class BookPublicComponent implements OnInit {
         tap((myCart) => {
           // create new entry in cart
           if (myCart) {
-            item.id = generateGUID();
-            item.cartId = myCart.id;
-            this.store.dispatch(
-              CartItemActions.addCartItem({ cartItem: item })
-            );
+            const cartItem: CartItem = {
+              id: generateGUID(),
+              bookId: bookId,
+              cartId: myCart.id,
+              quantity: 1,
+            };
+            this.store.dispatch(CartItemActions.addCartItem({ cartItem }));
           }
         })
       )
