@@ -46,7 +46,6 @@ export class CartItemService {
               quantity: cartItem.quantity,
               cartId: cartItem.cartId,
             };
-            console.log(createdItemWithBook);
             return createdItemWithBook;
           })
         )

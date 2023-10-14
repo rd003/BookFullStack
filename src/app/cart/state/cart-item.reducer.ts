@@ -42,10 +42,9 @@ export const cartItemReducer = createReducer(
       ...state,
       loading: false,
       cartItems: state.cartItems.map((a) =>
-        a.cartId === cartItem.id ? cartItem : a
+        a.id === cartItem.id ? cartItem : a
       ),
     };
-    console.log({ "😂": newState.cartItems });
 
     return newState;
   }),
