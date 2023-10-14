@@ -14,7 +14,7 @@ import {
   selectLoginState,
   selectUserInfo,
 } from "./auth/state/auth.selectors";
-import { map, Observable, Subject, tap } from "rxjs";
+import { map, NEVER, Observable, Subject, switchMap, tap } from "rxjs";
 import { tokenUtils } from "./utils/token.utils";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
@@ -22,6 +22,8 @@ import { AsyncPipe } from "@angular/common";
 import { CartActions } from "./cart/state/cart.action";
 import { CartItemActions } from "./cart/state/cart-item.action";
 import { selectCartItems } from "./cart/state/cart-item.selector";
+import { selectCart } from "./cart/state/cart.selector";
+import { Cart } from "./cart/cart.model";
 
 @Component({
   standalone: true,
@@ -65,6 +67,7 @@ export class AppComponent implements OnDestroy {
   loginResponse$ = this.store.select(selectLoginResponseState);
   isLoggedIn$ = this.store.select(selectLoginState);
   userInfo$ = this.store.select(selectUserInfo);
+  cart$: Observable<Cart | null> = this.store.select(selectCart);
 
   cartItemCount$: Observable<number> = this.store
     .select(selectCartItems)
@@ -93,7 +96,25 @@ export class AppComponent implements OnDestroy {
             if (accessToken) {
               // set loginResponse state here on application start
               this.store.dispatch(authActions.loadAuthInfo({ accessToken }));
+              const user = tokenUtils.getUserFromToken(accessToken);
+              if (user?.username)
+                this.store.dispatch(
+                  CartActions.loadCart({ username: user.username })
+                );
             }
+          }
+        }),
+        takeUntilDestroyed()
+      )
+      .subscribe();
+
+    this.cart$
+      .pipe(
+        tap((cart) => {
+          if (cart) {
+            this.store.dispatch(
+              CartItemActions.loadCartItems({ cartId: cart.id })
+            );
           }
         }),
         takeUntilDestroyed()

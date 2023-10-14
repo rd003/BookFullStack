@@ -45,6 +45,8 @@ export const cartItemReducer = createReducer(
         a.cartId === cartItem.id ? cartItem : a
       ),
     };
+    console.log({ "😂": newState.cartItems });
+
     return newState;
   }),
   on(CartItemActions.updateCartItemFailure, (state, { error }) => ({

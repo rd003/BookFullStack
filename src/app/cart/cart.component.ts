@@ -46,7 +46,7 @@ import { CartItemActions } from "./state/cart-item.action";
           </ng-container>
 
           <ng-template #noitems>
-            <h3>No items in the cart🥱. Please <a href="/books">add 🛒.</a></h3>
+            <h3>No items in the cart 🛒. Please <a href="/books">add ➕</a></h3>
           </ng-template>
         </ng-container>
       </ng-template>

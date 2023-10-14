@@ -34,21 +34,25 @@ export class CartItemService {
   }
 
   update(cartItem: CartItem): Observable<CartItemModel> {
-    this.http.put(`${this.url}/${cartItem.id}`, cartItem);
-    const cartItemModel: Observable<CartItemModel> = this.bookService
-      .findBookById(cartItem.bookId)
-      .pipe(
-        map((book) => {
-          const createdItemWithBook: CartItemModel = {
-            id: cartItem.id,
-            book: book,
-            quantity: cartItem.quantity,
-            cartId: cartItem.cartId,
-          };
-          return createdItemWithBook;
-        })
-      );
-    return cartItemModel;
+    const updated$ = this.http.put(`${this.url}/${cartItem.id}`, cartItem);
+
+    const cartItemModel$: Observable<CartItemModel> = updated$.pipe(
+      switchMap(() =>
+        this.bookService.findBookById(cartItem.bookId).pipe(
+          map((book) => {
+            const createdItemWithBook: CartItemModel = {
+              id: cartItem.id,
+              book: book,
+              quantity: cartItem.quantity,
+              cartId: cartItem.cartId,
+            };
+            console.log(createdItemWithBook);
+            return createdItemWithBook;
+          })
+        )
+      )
+    );
+    return cartItemModel$;
   }
 
   getById(id: string): Observable<CartItem> {

@@ -43,9 +43,10 @@ export class CartItemEffects {
       ofType(CartItemActions.updateCartItem),
       switchMap((action) =>
         this.cartItemService.update(action.cartItem).pipe(
-          map((cartItem) =>
-            CartItemActions.updateCartItemSuccess({ cartItem })
-          ),
+          map((cartItem) => {
+            console.log({ cartItem });
+            return CartItemActions.updateCartItemSuccess({ cartItem });
+          }),
           catchError((error) =>
             of(CartItemActions.removeCartItemFailure({ error }))
           )
