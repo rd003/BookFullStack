@@ -1,5 +1,11 @@
 import { AsyncPipe, NgFor, NgIf } from "@angular/common";
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
@@ -29,7 +35,7 @@ import { Book } from "src/app/book/data/book.model";
         <p>Price: ₹{{ book.Price }}</p>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-raised-button color="accent">
+        <button mat-raised-button color="accent" (click)="addToCart.emit(book)">
           <mat-icon>shopping_cart</mat-icon>
           Add To Cart
         </button>
@@ -59,4 +65,5 @@ import { Book } from "src/app/book/data/book.model";
 })
 export class BookListPublicComponent {
   @Input() books!: Book[];
+  @Output() addToCart = new EventEmitter<Book>();
 }

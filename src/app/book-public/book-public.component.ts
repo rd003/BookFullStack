@@ -25,6 +25,7 @@ import { selectUserInfo } from "../auth/state/auth.selectors";
 import { generateGUID } from "ngx-rlibs";
 import { CartActions } from "../cart/state/cart.action";
 import { CartItemActions } from "../cart/state/cart-item.action";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 
 @Component({
   selector: "app-book-public",
@@ -35,6 +36,7 @@ import { CartItemActions } from "../cart/state/cart-item.action";
     AsyncPipe,
     BookListPublicComponent,
     BookFilterPublicComponent,
+    MatSnackBarModule,
   ],
   template: `
     <ng-container *ngIf="error$ | async; else noerror">
@@ -60,6 +62,7 @@ import { CartItemActions } from "../cart/state/cart-item.action";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BookPublicComponent implements OnInit {
+  snackBar = inject(MatSnackBar);
   store = inject(Store);
   books$ = this.store.select(selectBooks);
   loading$ = this.store.select(selectBookLoading);
@@ -68,7 +71,7 @@ export class BookPublicComponent implements OnInit {
   // user
   user$ = this.store.select(selectUserInfo);
 
-  cart$: Observable<Cart | null> = this.store.select(selectCart); // 💩
+  cart$: Observable<Cart | null> = this.store.select(selectCart);
   cartItems$: Observable<CartItemModel[]> = this.store.select(selectCartItems);
 
   isCartCreated$ = this.cart$.pipe(map((a) => (a ? true : false)));
@@ -90,8 +93,18 @@ export class BookPublicComponent implements OnInit {
   }
 
   addItemToCart(item: CartItem) {
-    if (this.isCartExists$) this.incrementQuantity(item);
-    else this.createCartEntry(item);
+    try {
+      if (this.isCartExists$) this.incrementQuantity(item);
+      else this.createCartEntry(item);
+      this.snackBar.open("Item added to cart", "dismis", {
+        duration: 1000,
+      });
+    } catch (error: any) {
+      console.log(error);
+      this.snackBar.open("Error on adding item", "dismis", {
+        duration: 1000,
+      });
+    }
   }
 
   // increment quantity of  cart item
