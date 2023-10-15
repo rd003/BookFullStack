@@ -2,6 +2,7 @@ import { AsyncPipe, NgFor, NgIf } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  OnDestroy,
   OnInit,
   inject,
 } from "@angular/core";
@@ -16,10 +17,23 @@ import { BookListPublicComponent } from "./UI/book-list-public.component";
 import { BookFilterPublicComponent } from "./UI/book-filter-public.component";
 import { selectCart } from "../cart/state/cart.selector";
 import {
+  selectCartItemByBookId,
   selectCartItemById,
   selectCartItems,
 } from "../cart/state/cart-item.selector";
-import { Observable, combineLatest, map, tap } from "rxjs";
+import {
+  Observable,
+  Subject,
+  catchError,
+  combineLatest,
+  first,
+  map,
+  of,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+} from "rxjs";
 import { Cart, CartItem, CartItemModel } from "../cart/cart.model";
 import {
   selectLoginResponseState,
@@ -52,7 +66,7 @@ import { Book } from "../book/data/book.model";
           <app-book-filter-public (OnBookSearch)="handleBookSearch($event)" />
           <app-book-list-public
             [books]="books"
-            (addToCart)="addItemToCart($event)"
+            (addToCart)="handleAddItem($event)"
           />
         </ng-container>
         <ng-template #nodata> No books found </ng-template>
@@ -68,12 +82,13 @@ import { Book } from "../book/data/book.model";
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BookPublicComponent implements OnInit {
+export class BookPublicComponent implements OnInit, OnDestroy {
   snackBar = inject(MatSnackBar);
   store = inject(Store);
   books$ = this.store.select(selectBooks);
   loading$ = this.store.select(selectBookLoading);
   error$ = this.store.select(selectBookError);
+  destroy$ = new Subject<boolean>();
 
   // user
   user$ = this.store.select(selectUserInfo);
@@ -105,43 +120,34 @@ export class BookPublicComponent implements OnInit {
     this.store.dispatch(BookActions.loadBooks());
   }
 
-  addItemToCart(book: Book) {
+  handleAddItem(book: Book) {
     combineLatest([this.isLoggedIn$, this.isCartExists$])
       .pipe(
+        first(),
         tap(([isLoggedIn, isCartExist]) => {
           // getting infinite loop here
           // use something like distinct
           if (!isLoggedIn) alert("Please login first");
           else {
-            alert(isCartExist);
+            if (!isCartExist) this.createCartEntry(book.id);
+            else this.incrementQuantity(book.id);
           }
-        })
+        }),
+        catchError((error) => {
+          console.log(error);
+          return of(false);
+        }),
+        takeUntil(this.destroy$)
       )
       .subscribe();
-    // try {
-    //   if (this.isCartExists$) {
-    //     // find cartitem by bookId
-    //     this.incrementQuantity(item);
-    //   } else this.createCartEntry(book.id);
-    //   this.snackBar.open("Item added to cart", "dismis", {
-    //     duration: 1000,
-    //   });
-    // } catch (error: any) {
-    //   console.log(error);
-    //   this.snackBar.open("Error on adding item", "dismis", {
-    //     duration: 1000,
-    //   });
-    // }
   }
 
   // increment quantity of  cart item
-  private incrementQuantity(item: CartItem) {
-    const cartItem$ = this.store.select(
-      selectCartItemById({ cartItemId: item.id })
-    );
-    cartItem$
+  private incrementQuantity(bookId: string) {
+    const cartItemIncremented$ = this.store
+      .select(selectCartItemByBookId({ bookId }))
       .pipe(
-        tap((cartItemModel) => {
+        switchMap((cartItemModel) => {
           if (cartItemModel) {
             const cartItem: CartItem = {
               id: cartItemModel.id,
@@ -150,52 +156,102 @@ export class BookPublicComponent implements OnInit {
               quantity: cartItemModel.quantity + 1,
             };
             this.store.dispatch(CartItemActions.updateCartItem({ cartItem }));
+            return of(true);
           }
+          return of(false);
+        }),
+        catchError((error) => {
+          console.log(error);
+          return of(false);
         })
-      )
-      .subscribe();
+      );
+
+    cartItemIncremented$.pipe(
+      tap((val) => {
+        if (val === true) {
+          this.snackBar.open("Item has added to cart.", "dismis", {
+            duration: 1000,
+          });
+        } else {
+          this.snackBar.open("Error on adding item!!!", "dismis", {
+            duration: 1000,
+          });
+        }
+      }),
+      takeUntil(this.destroy$)
+    );
   }
 
   // create new entry in cart (cart & cartItem)
   private createCartEntry(bookId: string) {
     // check user, if user is logged in then create cart
-    this.user$
-      .pipe(
-        tap((user) => {
-          if (user) {
-            const cart: Cart = {
-              username: user.username,
-              id: generateGUID(),
-            };
-            this.store.dispatch(CartActions.addCart({ cart }));
-          }
-        })
-      )
-      .subscribe();
+    const createCart$ = this.user$.pipe(
+      take(1),
+      switchMap((user) => {
+        if (user) {
+          const cart: Cart = {
+            username: user.username,
+            id: generateGUID(),
+          };
+          this.store.dispatch(CartActions.addCart({ cart }));
+          return this.cart$.pipe(take(1));
+        } else {
+          return of(null);
+        }
+      }),
+      catchError((ex) => {
+        console.log(ex);
+        return of(null);
+      })
+    );
 
     // check if cart is available, because we need cartId to generate cartItem
     // if cart is not null then, generate cartItem
-    this.cart$
-      .pipe(
-        tap((myCart) => {
-          // create new entry in cart
-          if (myCart) {
-            const cartItem: CartItem = {
-              id: generateGUID(),
-              bookId: bookId,
-              cartId: myCart.id,
-              quantity: 1,
-            };
-            this.store.dispatch(CartItemActions.addCartItem({ cartItem }));
-          }
-        })
-      )
-      .subscribe();
+    const isCartCreated$ = createCart$.pipe(
+      switchMap((myCart) => {
+        // create new entry in cart
+        if (myCart) {
+          const cartItem: CartItem = {
+            id: generateGUID(),
+            bookId: bookId,
+            cartId: myCart.id,
+            quantity: 1,
+          };
+          this.store.dispatch(CartItemActions.addCartItem({ cartItem }));
+          return of(true);
+        }
+        return of(false);
+      }),
+      catchError((ex) => {
+        console.log(ex);
+        return of(false);
+      })
+    );
+
+    isCartCreated$.pipe(
+      tap((val) => {
+        if (val === true) {
+          this.snackBar.open("Item has added to cart.", "dismis", {
+            duration: 1000,
+          });
+        } else {
+          this.snackBar.open("Error on adding item!!!", "dismis", {
+            duration: 1000,
+          });
+        }
+      }),
+      takeUntil(this.destroy$)
+    );
   }
 
   ngOnInit(): void {
     this.store.dispatch(BookActions.setPage({ page: null }));
     this.store.dispatch(BookActions.setLimit({ limit: null }));
     this.store.dispatch(BookActions.loadBooks());
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }
