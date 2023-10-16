@@ -60,7 +60,7 @@ export const cartItemReducer = createReducer(
   on(CartItemActions.removeCartItemSuccess, (state, { id }) => ({
     ...state,
     loading: false,
-    cartItems: state.cartItems.filter((a) => a.cartId !== a.id),
+    cartItems: state.cartItems.filter((a) => a.id !== a.id),
   })),
   on(CartItemActions.removeCartItemFailure, (state, { error }) => ({
     ...state,

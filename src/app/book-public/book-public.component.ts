@@ -16,7 +16,10 @@ import {
 import { BookListPublicComponent } from "./UI/book-list-public.component";
 import { BookFilterPublicComponent } from "./UI/book-filter-public.component";
 import { selectCart } from "../cart/state/cart.selector";
-import { selectCartItemByBookId } from "../cart/state/cart-item.selector";
+import {
+  selectCartItemByBookAndCart,
+  selectCartItems,
+} from "../cart/state/cart-item.selector";
 import {
   Observable,
   Subject,
@@ -30,7 +33,7 @@ import {
   takeUntil,
   tap,
 } from "rxjs";
-import { Cart, CartItem } from "../cart/cart.model";
+import { Cart, CartItem, CartItemModel } from "../cart/cart.model";
 import {
   selectLoginResponseState,
   selectUserInfo,
@@ -96,7 +99,7 @@ export class BookPublicComponent implements OnInit, OnDestroy {
   );
 
   cart$: Observable<Cart | null> = this.store.select(selectCart);
-  // cartItems$: Observable<CartItemModel[]> = this.store.select(selectCartItems);
+  cartItems$: Observable<CartItemModel[]> = this.store.select(selectCartItems);
 
   // isCartCreated$ = this.cart$.pipe(map((a) => (a ? true : false)));
   // isCartItemsEmpty$ = this.cartItems$.pipe(
@@ -141,8 +144,7 @@ export class BookPublicComponent implements OnInit, OnDestroy {
   // increment quantity of  cart item
   private handleExisitingCart(bookId: string, cartId: string) {
     const cartItemIncremented$ = this.store
-      //💩 select cart item by bookId and cartId
-      .select(selectCartItemByBookId({ bookId }))
+      .select(selectCartItemByBookAndCart({ bookId, cartId }))
       .pipe(
         first(),
         switchMap((cartItemModel) => {
