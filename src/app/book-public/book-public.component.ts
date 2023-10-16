@@ -124,12 +124,13 @@ export class BookPublicComponent implements OnInit, OnDestroy {
       .pipe(
         first(),
         tap(([isLoggedIn, cart]) => {
+          console.log({ isLoggedIn, cart });
           // getting infinite loop here
           // use something like distinct
           if (!isLoggedIn) alert("Please login first");
           else {
-            if (!cart) this.createCartForFirstTime(book.id);
-            else this.handleExisitingCart(book.id, cart.id);
+            if (cart) this.handleExisitingCart(book.id, cart.id);
+            else this.createCartForFirstTime(book.id);
           }
         }),
         catchError((error) => {
@@ -201,6 +202,7 @@ export class BookPublicComponent implements OnInit, OnDestroy {
       take(1),
       switchMap((user) => {
         if (user) {
+          console.log({ user });
           const cart: Cart = {
             username: user.username,
             id: generateGUID(),
