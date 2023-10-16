@@ -124,7 +124,6 @@ export class BookPublicComponent implements OnInit, OnDestroy {
       .pipe(
         first(),
         tap(([isLoggedIn, cart]) => {
-          console.log({ isLoggedIn, cart });
           // getting infinite loop here
           // use something like distinct
           if (!isLoggedIn) alert("Please login first");
@@ -202,7 +201,6 @@ export class BookPublicComponent implements OnInit, OnDestroy {
       take(1),
       switchMap((user) => {
         if (user) {
-          console.log({ user });
           const cart: Cart = {
             username: user.username,
             id: generateGUID(),
@@ -214,7 +212,7 @@ export class BookPublicComponent implements OnInit, OnDestroy {
         }
       }),
       catchError((ex) => {
-        console.log(ex);
+        console.error(ex);
         return of(null);
       })
     );
@@ -233,7 +231,6 @@ export class BookPublicComponent implements OnInit, OnDestroy {
             quantity: 1,
           };
           this.store.dispatch(CartItemActions.addCartItem({ cartItem }));
-          console.log("created");
           return of(true);
         }
         return of(false);
@@ -244,20 +241,22 @@ export class BookPublicComponent implements OnInit, OnDestroy {
       })
     );
 
-    isCartCreated$.pipe(
-      tap((val) => {
-        if (val === true) {
-          this.snackBar.open("Item has added to cart.", "dismis", {
-            duration: 1000,
-          });
-        } else {
-          this.snackBar.open("Error on adding item!!!", "dismis", {
-            duration: 1000,
-          });
-        }
-      }),
-      takeUntil(this.destroy$)
-    );
+    isCartCreated$
+      .pipe(
+        tap((val) => {
+          if (val === true) {
+            this.snackBar.open("Item has added to cart.", "dismis", {
+              duration: 1000,
+            });
+          } else {
+            this.snackBar.open("Error on adding item!!!", "dismis", {
+              duration: 1000,
+            });
+          }
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe();
   }
 
   ngOnInit(): void {
