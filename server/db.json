@@ -40,6 +40,24 @@
       "bookId": "8ef9f86b-cdc4-49ab-88de-f641e8d0ab73",
       "cartId": "cart1",
       "quantity": 2
+    },
+    {
+      "id": "c85ba345-786b-4d36-a28f-408b171a0573",
+      "bookId": "5f6cfe46-5c34-4401-a555-adc10a2cb93b",
+      "cartId": "cart1",
+      "quantity": 1
+    },
+    {
+      "id": "54fe00ef-f57b-4d70-9468-71eb39cbc785",
+      "bookId": "2fd05a90-a8d0-4d67-a008-31c4d87bf807",
+      "cartId": "cart1",
+      "quantity": 1
+    },
+    {
+      "id": "90836643-9df4-43fc-8604-4bb11e321cee",
+      "bookId": "b8d1409d-fd55-42b9-9df4-9428d9e2edfc",
+      "cartId": "cart1",
+      "quantity": 2
     }
   ],
   "books": [

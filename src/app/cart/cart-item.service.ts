@@ -2,7 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { environment } from "src/environments/environment.development";
 import { CartItem, CartItemModel } from "./cart.model";
 import { HttpClient } from "@angular/common/http";
-import { Observable, map, switchMap } from "rxjs";
+import { Observable, catchError, map, of, switchMap } from "rxjs";
 import { BookService } from "../book/data/book.service";
 
 @Injectable({ providedIn: "root" })
@@ -16,7 +16,7 @@ export class CartItemService {
 
     const itemWithBooks$: Observable<CartItemModel> = createdItem$.pipe(
       switchMap((createdItem) =>
-        this.bookService.findBookById(createdItem.id).pipe(
+        this.bookService.findBookById(createdItem.bookId).pipe(
           map((book) => {
             const createdItemWithBook: CartItemModel = {
               id: createdItem.id,
@@ -25,6 +25,10 @@ export class CartItemService {
               cartId: createdItem.cartId,
             };
             return createdItemWithBook;
+          }),
+          catchError((err) => {
+            console.error(err);
+            return of(err);
           })
         )
       )

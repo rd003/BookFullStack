@@ -24,13 +24,13 @@ export const cartItemReducer = createReducer(
     loading: true,
   })),
   on(CartItemActions.addCartItemSuccess, (state, { cartItem }) => {
-    const updateState = {
+    const updatedState = {
       ...state,
       loading: false,
       cartItems: [...state.cartItems, cartItem],
     };
-    console.log(updateState.cartItems);
-    return updateState;
+    console.log(updatedState.cartItems);
+    return updatedState;
   }),
   on(CartItemActions.addCartItemFailure, (state, { error }) => ({
     ...state,
@@ -61,14 +61,11 @@ export const cartItemReducer = createReducer(
     ...state,
     loading: true,
   })),
-  on(CartItemActions.removeCartItemSuccess, (state, { id }) => {
-    const stateAfterDelete = {
-      ...state,
-      loading: false,
-      cartItems: state.cartItems.filter((a) => a.id !== id),
-    };
-    return stateAfterDelete;
-  }),
+  on(CartItemActions.removeCartItemSuccess, (state, { id }) => ({
+    ...state,
+    loading: false,
+    cartItems: state.cartItems.filter((a) => a.id !== id),
+  })),
   on(CartItemActions.removeCartItemFailure, (state, { error }) => ({
     ...state,
     loading: false,
