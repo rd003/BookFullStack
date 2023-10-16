@@ -40,8 +40,13 @@ export const selectCartTotal = createSelector(
   (subTotal, tax) => Number((subTotal + tax).toFixed(2))
 );
 
-export const selectCartItemByBookId = (props: { bookId: string }) =>
+export const selectCartItemByBookAndCart = (props: {
+  bookId: string;
+  cartId: string;
+}) =>
   createSelector(selectCartItems, (cartItems) => {
-    const item = cartItems.find((a) => a.book.id === props.bookId);
+    const item = cartItems.find(
+      (a) => a.book.id === props.bookId && a.cartId === props.cartId
+    );
     return item;
   });

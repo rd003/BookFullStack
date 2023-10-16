@@ -16,11 +16,7 @@ import {
 import { BookListPublicComponent } from "./UI/book-list-public.component";
 import { BookFilterPublicComponent } from "./UI/book-filter-public.component";
 import { selectCart } from "../cart/state/cart.selector";
-import {
-  selectCartItemByBookId,
-  selectCartItemById,
-  selectCartItems,
-} from "../cart/state/cart-item.selector";
+import { selectCartItemByBookId } from "../cart/state/cart-item.selector";
 import {
   Observable,
   Subject,
@@ -34,7 +30,7 @@ import {
   takeUntil,
   tap,
 } from "rxjs";
-import { Cart, CartItem, CartItemModel } from "../cart/cart.model";
+import { Cart, CartItem } from "../cart/cart.model";
 import {
   selectLoginResponseState,
   selectUserInfo,
@@ -100,20 +96,20 @@ export class BookPublicComponent implements OnInit, OnDestroy {
   );
 
   cart$: Observable<Cart | null> = this.store.select(selectCart);
-  cartItems$: Observable<CartItemModel[]> = this.store.select(selectCartItems);
+  // cartItems$: Observable<CartItemModel[]> = this.store.select(selectCartItems);
 
-  isCartCreated$ = this.cart$.pipe(map((a) => (a ? true : false)));
-  isCartItemsEmpty$ = this.cartItems$.pipe(
-    map((a) => (a.length > 0 ? false : true))
-  );
-  isCartExists$ = combineLatest([
-    this.isCartCreated$,
-    this.isCartItemsEmpty$,
-  ]).pipe(
-    map(([isCartCreated, isCartEmpty]) => {
-      return isCartCreated && !isCartEmpty;
-    })
-  );
+  // isCartCreated$ = this.cart$.pipe(map((a) => (a ? true : false)));
+  // isCartItemsEmpty$ = this.cartItems$.pipe(
+  //   map((a) => (a.length > 0 ? false : true))
+  // );
+  // isCartExists$ = combineLatest([
+  //   this.isCartCreated$,
+  //   this.isCartItemsEmpty$,
+  // ]).pipe(
+  //   map(([isCartCreated, isCartEmpty]) => {
+  //     return isCartCreated && !isCartEmpty;
+  //   })
+  //);
 
   handleBookSearch(searchTerm: string) {
     this.store.dispatch(BookActions.setSearchTerm({ searchTerm }));
@@ -121,16 +117,16 @@ export class BookPublicComponent implements OnInit, OnDestroy {
   }
 
   handleAddItem(book: Book) {
-    combineLatest([this.isLoggedIn$, this.isCartExists$])
+    combineLatest([this.isLoggedIn$, this.cart$])
       .pipe(
         first(),
-        tap(([isLoggedIn, isCartExist]) => {
+        tap(([isLoggedIn, cart]) => {
           // getting infinite loop here
           // use something like distinct
           if (!isLoggedIn) alert("Please login first");
           else {
-            if (!isCartExist) this.createCartEntry(book.id);
-            else this.incrementQuantity(book.id);
+            if (!cart) this.createCartForFirstTime(book.id);
+            else this.handleExisitingCart(book.id, cart.id);
           }
         }),
         catchError((error) => {
@@ -143,10 +139,12 @@ export class BookPublicComponent implements OnInit, OnDestroy {
   }
 
   // increment quantity of  cart item
-  private incrementQuantity(bookId: string) {
+  private handleExisitingCart(bookId: string, cartId: string) {
     const cartItemIncremented$ = this.store
+      //💩 select cart item by bookId and cartId
       .select(selectCartItemByBookId({ bookId }))
       .pipe(
+        first(),
         switchMap((cartItemModel) => {
           if (cartItemModel) {
             const cartItem: CartItem = {
@@ -156,9 +154,19 @@ export class BookPublicComponent implements OnInit, OnDestroy {
               quantity: cartItemModel.quantity + 1,
             };
             this.store.dispatch(CartItemActions.updateCartItem({ cartItem }));
-            return of(true);
+          } else {
+            // add item to cart
+            const newCartItem: CartItem = {
+              id: generateGUID(),
+              bookId: bookId,
+              cartId: cartId,
+              quantity: 1,
+            };
+            this.store.dispatch(
+              CartItemActions.addCartItem({ cartItem: newCartItem })
+            );
           }
-          return of(false);
+          return of(true);
         }),
         catchError((error) => {
           console.log(error);
@@ -166,24 +174,26 @@ export class BookPublicComponent implements OnInit, OnDestroy {
         })
       );
 
-    cartItemIncremented$.pipe(
-      tap((val) => {
-        if (val === true) {
-          this.snackBar.open("Item has added to cart.", "dismis", {
-            duration: 1000,
-          });
-        } else {
-          this.snackBar.open("Error on adding item!!!", "dismis", {
-            duration: 1000,
-          });
-        }
-      }),
-      takeUntil(this.destroy$)
-    );
+    cartItemIncremented$
+      .pipe(
+        tap((val) => {
+          if (val === true) {
+            this.snackBar.open("Item has added to cart.", "dismis", {
+              duration: 1000,
+            });
+          } else {
+            this.snackBar.open("Error on adding item!!!", "dismis", {
+              duration: 1000,
+            });
+          }
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe();
   }
 
   // create new entry in cart (cart & cartItem)
-  private createCartEntry(bookId: string) {
+  private createCartForFirstTime(bookId: string) {
     // check user, if user is logged in then create cart
     const createCart$ = this.user$.pipe(
       take(1),
@@ -211,6 +221,7 @@ export class BookPublicComponent implements OnInit, OnDestroy {
       switchMap((myCart) => {
         // create new entry in cart
         if (myCart) {
+          console.log(myCart);
           const cartItem: CartItem = {
             id: generateGUID(),
             bookId: bookId,
@@ -218,6 +229,7 @@ export class BookPublicComponent implements OnInit, OnDestroy {
             quantity: 1,
           };
           this.store.dispatch(CartItemActions.addCartItem({ cartItem }));
+          console.log("created");
           return of(true);
         }
         return of(false);
