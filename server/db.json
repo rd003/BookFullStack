@@ -3,33 +3,23 @@
     {
       "username": "ravindra",
       "password": "ravindra@123",
-      "roles": [
-        "admin"
-      ]
+      "roles": ["admin"]
     },
     {
       "username": "john",
       "password": "john@123",
-      "roles": [
-        "user"
-      ]
+      "roles": ["user"]
     },
     {
       "username": "ved",
       "password": "ved@123",
-      "roles": [
-        "editor,developer"
-      ]
+      "roles": ["editor,developer"]
     }
   ],
   "carts": [
     {
       "id": "cart1",
       "username": "john"
-    },
-    {
-      "username": "ravindra",
-      "id": "195d2122-b185-454d-a02c-f909776e0f8e"
     }
   ],
   "cartItems": [
