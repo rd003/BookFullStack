@@ -3,17 +3,23 @@
     {
       "username": "ravindra",
       "password": "ravindra@123",
-      "roles": ["admin"]
+      "roles": [
+        "admin"
+      ]
     },
     {
       "username": "john",
       "password": "john@123",
-      "roles": ["user"]
+      "roles": [
+        "user"
+      ]
     },
     {
       "username": "ved",
       "password": "ved@123",
-      "roles": ["editor,developer"]
+      "roles": [
+        "editor,developer"
+      ]
     }
   ],
   "carts": [

@@ -196,7 +196,6 @@ export class BookPublicComponent implements OnInit, OnDestroy {
 
   // create new entry in cart (cart & cartItem)
   private createCartForFirstTime(bookId: string) {
-    // check user, if user is logged in then create cart
     const createCart$ = this.user$.pipe(
       take(1),
       switchMap((user) => {
@@ -232,8 +231,9 @@ export class BookPublicComponent implements OnInit, OnDestroy {
           };
           this.store.dispatch(CartItemActions.addCartItem({ cartItem }));
           return of(true);
+        } else {
+          return of(false);
         }
-        return of(false);
       }),
       catchError((ex) => {
         console.log(ex);

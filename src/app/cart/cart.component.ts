@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  inject,
+} from "@angular/core";
 import { CartItemComponent } from "./ui/cart-item.component";
 import { CartSummaryComponent } from "./ui/cart-summary.component";
 import { Store } from "@ngrx/store";
@@ -10,11 +15,22 @@ import {
   selectSubTotal,
   selectTax,
 } from "./state/cart-item.selector";
-import { Observable, map } from "rxjs";
+import {
+  Observable,
+  Subject,
+  catchError,
+  map,
+  of,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+} from "rxjs";
 import { CartItem, CartItemModel } from "./cart.model";
 import { AsyncPipe, NgFor, NgIf } from "@angular/common";
 import { HttpErrorResponse } from "@angular/common/http";
 import { CartItemActions } from "./state/cart-item.action";
+import { CartActions } from "./state/cart.action";
 
 @Component({
   selector: "app-cart",
@@ -67,7 +83,8 @@ import { CartItemActions } from "./state/cart-item.action";
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CartComponent {
+export class CartComponent implements OnDestroy {
+  destroyed$ = new Subject<boolean>();
   store = inject(Store);
   cartItems$: Observable<CartItemModel[]> = this.store.select(selectCartItems);
   subTotal$: Observable<number> = this.store.select(selectSubTotal);
@@ -97,7 +114,39 @@ export class CartComponent {
 
   onDeleteItem(id: string) {
     if (window.confirm("Are you sure to delete?")) {
-      this.store.dispatch(CartItemActions.removeCartItem({ id }));
+      this.cartItems$
+        .pipe(
+          take(1), // Take only one emission of the cart items
+          switchMap((items) => {
+            this.store.dispatch(CartItemActions.removeCartItem({ id }));
+            return of(items);
+          }),
+          switchMap((items) => {
+            if (items.length === 1) {
+              this.store.dispatch(
+                CartActions.removeCart({ id: items[0].cartId })
+              );
+            }
+            return of(true);
+          }),
+          catchError((err) => {
+            console.log(err);
+            return of(false);
+          }),
+          takeUntil(this.destroyed$)
+        )
+        .subscribe({
+          next: (val) => {
+            if (!val) {
+              alert("item could not deleted!");
+            }
+          },
+        });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.unsubscribe();
   }
 }
