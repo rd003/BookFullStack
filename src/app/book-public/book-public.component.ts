@@ -25,6 +25,7 @@ import {
   Subject,
   catchError,
   combineLatest,
+  concatMap,
   first,
   map,
   of,
@@ -196,33 +197,20 @@ export class BookPublicComponent implements OnInit, OnDestroy {
 
   // create new entry in cart (cart & cartItem)
   private createCartForFirstTime(bookId: string) {
-    const createCart$ = this.user$.pipe(
-      take(1),
-      switchMap((user) => {
-        if (user) {
+    this.user$
+      .pipe(
+        take(1),
+        switchMap((user) => {
+          if (!user) return of(null);
           const cart: Cart = {
             username: user.username,
             id: generateGUID(),
           };
           this.store.dispatch(CartActions.addCart({ cart }));
-          return this.cart$.pipe(take(1));
-        } else {
-          return of(null);
-        }
-      }),
-      catchError((ex) => {
-        console.error(ex);
-        return of(null);
-      })
-    );
-
-    // check if cart is available, because we need cartId to generate cartItem
-    // if cart is not null then, generate cartItem
-    const isCartCreated$ = createCart$.pipe(
-      switchMap((myCart) => {
-        // create new entry in cart
-        if (myCart) {
-          console.log(myCart);
+          return of(cart);
+        }),
+        switchMap((myCart) => {
+          if (!myCart) return of(false);
           const cartItem: CartItem = {
             id: generateGUID(),
             bookId: bookId,
@@ -231,32 +219,24 @@ export class BookPublicComponent implements OnInit, OnDestroy {
           };
           this.store.dispatch(CartItemActions.addCartItem({ cartItem }));
           return of(true);
-        } else {
+        }),
+        catchError((err) => {
+          console.log(err);
           return of(false);
-        }
-      }),
-      catchError((ex) => {
-        console.log(ex);
-        return of(false);
-      })
-    );
-
-    isCartCreated$
-      .pipe(
-        tap((val) => {
-          if (val === true) {
-            this.snackBar.open("Item has added to cart.", "dismis", {
-              duration: 1000,
-            });
-          } else {
-            this.snackBar.open("Error on adding item!!!", "dismis", {
-              duration: 1000,
-            });
-          }
         }),
         takeUntil(this.destroy$)
       )
-      .subscribe();
+      .subscribe((addedToCart) => {
+        if (addedToCart === true) {
+          this.snackBar.open("Item has been added to the cart.", "dismiss", {
+            duration: 1000,
+          });
+        } else {
+          this.snackBar.open("Error on adding item!!!", "dismiss", {
+            duration: 1000,
+          });
+        }
+      });
   }
 
   ngOnInit(): void {
