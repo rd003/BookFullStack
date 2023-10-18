@@ -24,14 +24,14 @@ export const cartItemReducer = createReducer(
     loading: true,
   })),
   on(CartItemActions.addCartItemSuccess, (state, { cartItem }) => {
-    console.log({ cartItem });
-    console.log({ before: state.cartItems });
+    // console.log({ cartItem });
+    // console.log({ before: state.cartItems });
     const updatedState = {
       ...state,
       loading: false,
       cartItems: [...state.cartItems, cartItem],
     };
-    console.log({ "after:": updatedState.cartItems });
+    // console.log({ "after:": updatedState.cartItems });
     return updatedState;
   }),
   on(CartItemActions.addCartItemFailure, (state, { error }) => ({
@@ -78,8 +78,6 @@ export const cartItemReducer = createReducer(
     loading: true,
   })),
   on(CartItemActions.loadCartItemSuccess, (state, { cartItems }) => {
-    // how cartItems have 1 one item, since there is not item in cart.
-    console.log({ cartItems });
     const updatedState = {
       ...state,
       loading: false,

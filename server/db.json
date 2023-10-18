@@ -29,7 +29,7 @@
     },
     {
       "username": "ved",
-      "id": "84f8274f-ebf0-415e-baa1-c4b3e3d478a9"
+      "id": "92b983c0-bce0-4ecf-9b3c-c197373c9d1d"
     }
   ],
   "cartItems": [
@@ -46,9 +46,9 @@
       "quantity": 2
     },
     {
-      "id": "15b7675b-37d2-4832-a820-4b330bdaefd0",
-      "bookId": "591806aa-ea46-4f10-a971-dbae6dbf5e5d",
-      "cartId": "84f8274f-ebf0-415e-baa1-c4b3e3d478a9",
+      "id": "a93b2485-3dff-4ac1-8889-726a59ca8a34",
+      "bookId": "b9905116-ea11-41a7-9b5e-4ef116bd7247",
+      "cartId": "92b983c0-bce0-4ecf-9b3c-c197373c9d1d",
       "quantity": 1
     }
   ],

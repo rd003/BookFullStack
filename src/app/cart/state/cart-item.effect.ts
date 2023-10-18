@@ -61,9 +61,9 @@ export class CartItemEffects {
       ofType(CartItemActions.loadCartItems),
       switchMap((action) =>
         this.cartItemService.getCartItemsWithBook(action.cartId).pipe(
-          map((cartItems) =>
-            CartItemActions.loadCartItemSuccess({ cartItems })
-          ),
+          map((cartItems) => {
+            return CartItemActions.loadCartItemSuccess({ cartItems });
+          }),
           catchError((error) =>
             of(CartItemActions.loadCartItemFailure({ error }))
           )

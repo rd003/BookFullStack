@@ -2,7 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { environment } from "src/environments/environment.development";
 import { CartItem, CartItemModel } from "./cart.model";
 import { HttpClient } from "@angular/common/http";
-import { Observable, catchError, map, of, switchMap } from "rxjs";
+import { Observable, catchError, map, of, switchMap, tap } from "rxjs";
 import { BookService } from "../book/data/book.service";
 
 @Injectable({ providedIn: "root" })

@@ -3,6 +3,7 @@ import {
   Component,
   inject,
   OnDestroy,
+  OnInit,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { HeaderComponent } from "./header/header.component";
@@ -14,9 +15,19 @@ import {
   selectLoginState,
   selectUserInfo,
 } from "./auth/state/auth.selectors";
-import { map, NEVER, Observable, Subject, switchMap, tap } from "rxjs";
+import {
+  catchError,
+  map,
+  Observable,
+  of,
+  Subject,
+  switchMap,
+  take,
+  takeUntil,
+  takeWhile,
+  tap,
+} from "rxjs";
 import { tokenUtils } from "./utils/token.utils";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { AsyncPipe } from "@angular/common";
 import { CartActions } from "./cart/state/cart.action";
@@ -58,16 +69,16 @@ import { Cart } from "./cart/cart.model";
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent implements OnDestroy {
+export class AppComponent implements OnDestroy, OnInit {
   store = inject(Store);
   snackBar = inject(MatSnackBar);
   destroyed$ = new Subject<boolean>();
   router = inject(Router);
+  cartLoaded = false;
 
   loginResponse$ = this.store.select(selectLoginResponseState);
   isLoggedIn$ = this.store.select(selectLoginState);
   userInfo$ = this.store.select(selectUserInfo);
-  cart$: Observable<Cart | null> = this.store.select(selectCart);
 
   cartItemCount$: Observable<number> = this.store
     .select(selectCartItems)
@@ -85,8 +96,7 @@ export class AppComponent implements OnDestroy {
     this.router.navigate(["/auth/login"]);
   }
 
-  constructor() {
-    // setting loginResponse at app init.
+  loadAuthInfo() {
     this.loginResponse$
       .pipe(
         tap((loginResponse) => {
@@ -104,22 +114,41 @@ export class AppComponent implements OnDestroy {
             }
           }
         }),
-        takeUntilDestroyed()
+        catchError((error) => {
+          console.log(error);
+          return of(error);
+        }),
+        takeUntil(this.destroyed$)
       )
       .subscribe();
+  }
 
-    this.cart$
+  loadCart() {
+    const cart$: Observable<Cart | null> = this.store.select(selectCart);
+    cart$
       .pipe(
         tap((cart) => {
           if (cart) {
             this.store.dispatch(
               CartItemActions.loadCartItems({ cartId: cart.id })
             );
+            this.cartLoaded = true;
           }
         }),
-        takeUntilDestroyed()
+        takeWhile(() => this.cartLoaded),
+        catchError((error) => {
+          console.log(error);
+          return of(error);
+        }),
+        takeUntil(this.destroyed$)
       )
       .subscribe();
+  }
+
+  ngOnInit(): void {
+    console.log("On init");
+    this.loadAuthInfo();
+    this.loadCart();
   }
 
   ngOnDestroy(): void {
