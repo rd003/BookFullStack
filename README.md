@@ -1,6 +1,7 @@
 # BookFullStack
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.0.
+![screenshot_01](https://github.com/rd003/BookFullStack/blob/master/01.jpg)
 
 ## Development server
 
