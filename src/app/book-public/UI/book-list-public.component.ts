@@ -24,15 +24,23 @@ import { Book } from "src/app/book/data/book.model";
   ],
   template: `
     <mat-card class="example-card" *ngFor="let book of books">
-      <mat-card-header>
-        <mat-card-title>{{ book.Title }}</mat-card-title>
-        <mat-card-subtitle> {{ book.Title }}</mat-card-subtitle>
-      </mat-card-header>
-      <img mat-card-image [src]="book.ImageLink" alt="Photo of a Shiba Inu" />
+      <img
+        mat-card-image
+        class="book-image"
+        [src]="book.ImageLink"
+        alt="Photo of a Shiba Inu"
+      />
       <mat-card-content>
-        <p></p>
-        <p>Language: {{ book.Language }}</p>
-        <p>Price: ₹{{ book.Price }}</p>
+        <div style="font-weight: bold;margin:2px 0px">{{ book.Title }}</div>
+
+        <div class="">
+          {{ book.Author }}
+        </div>
+
+        <div class="">
+          {{ book.Language }}
+        </div>
+        <div class="">₹{{ book.Price }}</div>
       </mat-card-content>
       <mat-card-actions>
         <button mat-raised-button color="accent" (click)="addToCart.emit(book)">
@@ -45,10 +53,10 @@ import { Book } from "src/app/book/data/book.model";
   styles: [
     `
       .example-card {
-        max-width: 242px;
+        max-width: 170px;
       }
 
-      .example-header-image {
+      .book-image {
         /* background-image: url("https://material.angular.io/assets/img/examples/shiba1.jpg"); */
         background-size: cover;
       }
@@ -56,8 +64,8 @@ import { Book } from "src/app/book/data/book.model";
       :host {
         display: flex;
         flex-wrap: wrap;
-        gap: 50px;
-        padding: 10px 50px;
+        gap: 40px;
+        padding: 0px 97px;
       }
     `,
   ],

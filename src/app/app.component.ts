@@ -146,7 +146,6 @@ export class AppComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-    console.log("On init");
     this.loadAuthInfo();
     this.loadCart();
   }

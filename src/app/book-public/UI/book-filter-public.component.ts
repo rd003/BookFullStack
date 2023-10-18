@@ -26,7 +26,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     `
       .book-filters {
         padding-top: 10px;
-        padding-left: 50px;
+        padding-left: 96px;
         width: 100%;
       }
       mat-form-field {
