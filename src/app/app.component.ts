@@ -135,7 +135,7 @@ export class AppComponent implements OnDestroy, OnInit {
             this.cartLoaded = true;
           }
         }),
-        takeWhile(() => this.cartLoaded),
+        takeWhile(() => !this.cartLoaded),
         catchError((error) => {
           console.log(error);
           return of(error);
