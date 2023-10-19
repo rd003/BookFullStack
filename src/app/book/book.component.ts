@@ -10,7 +10,7 @@ import { Book } from "./data/book.model";
 import { BookPaginatorComponent } from "./ui/book-paginator.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
-import { Subject, takeUntil } from "rxjs";
+import { Subject, takeUntil, tap } from "rxjs";
 import { BookDialogComponent } from "./ui/book-dialog-component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { Store } from "@ngrx/store";
@@ -139,6 +139,8 @@ export class BookComponent implements OnDestroy {
     this.store.dispatch(BookActions.loadBooks());
   }
   constructor() {
+    this.store.dispatch(BookActions.setPage({ page: 1 }));
+    this.store.dispatch(BookActions.setLimit({ limit: 10 }));
     this.loadBooks();
   }
 }
