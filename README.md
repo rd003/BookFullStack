@@ -6,7 +6,7 @@ This project is made with `Angular 16.0.0` and `json-server` (as a backend).
 
 ![screenshot_01](https://github.com/rd003/BookFullStack/blob/master/01.jpg)
 ![screenshot_03](https://github.com/rd003/BookFullStack/blob/master/03.jpg)
-![screenshot_02](https://github.com/rd003/BookFullStack/blob/master/3.jpg)
+![screenshot_02](https://github.com/rd003/BookFullStack/blob/master/02.jpg)
 
 ## How to run it?
 
