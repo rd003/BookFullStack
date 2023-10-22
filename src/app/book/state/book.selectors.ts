@@ -48,6 +48,4 @@ export const selectSortDirection = createSelector(
 );
 
 export const selectBookById = (props: { id: string }) =>
-  createSelector(selectBooks, (books) =>
-    books?.filter((a) => a.id === props.id)
-  );
+  createSelector(selectBooks, (books) => books?.find((a) => a.id === props.id));
