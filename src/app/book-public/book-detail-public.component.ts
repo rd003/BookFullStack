@@ -6,7 +6,6 @@ import {
   OnInit,
   inject,
 } from "@angular/core";
-import { Book } from "../book/data/book.model";
 import { ActivatedRoute } from "@angular/router";
 import { map, of, switchMap } from "rxjs";
 import { Store } from "@ngrx/store";

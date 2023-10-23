@@ -9,6 +9,7 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
+import { RouterModule } from "@angular/router";
 import { Book } from "src/app/book/data/book.model";
 
 @Component({
@@ -21,16 +22,22 @@ import { Book } from "src/app/book/data/book.model";
     MatCardModule,
     MatButtonModule,
     MatIconModule,
+    RouterModule,
   ],
   template: `
     <mat-card class="example-card" *ngFor="let book of books">
       <img
+        [routerLink]="['/books', book.id]"
         mat-card-image
         class="book-image"
         [src]="book.ImageLink"
         alt="Photo of a Shiba Inu"
+        style="cursor:pointer"
       />
-      <mat-card-content>
+      <mat-card-content
+        [routerLink]="['/books', book.id]"
+        style="cursor:pointer"
+      >
         <div style="font-weight: bold;margin:2px 0px">{{ book.Title }}</div>
 
         <div class="">
