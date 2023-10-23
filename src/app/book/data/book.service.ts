@@ -44,8 +44,12 @@ export class BookService {
   }
 
   findBookById(id: string) {
-    const url = `${this.url}/${id}`;
-    return this.http.get<Book>(url);
+    var parameters = new HttpParams().set("id", id).set("bypassAuth", true);
+    return this.http
+      .get<Book[]>(this.url, {
+        params: parameters,
+      })
+      .pipe(map((a) => a[0]));
   }
 
   deleteBook(id: string) {
